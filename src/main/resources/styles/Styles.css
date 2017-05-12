@@ -1,3 +1,27 @@
-.button {
-    -fx-font-weight: bold;
+.root {
+    -base-gray: #1A1A1A;
+}
+
+.scene-bg {
+    -fx-background-color: derive(-base-gray, 20%);
+}
+
+.menu-bg {
+    -fx-background-color: -base-gray;
+}
+
+.label {
+    -fx-text-fill: white;
+}
+
+.text-field {
+    -fx-text-fill: derive(-base-gray, 99%);
+    -fx-background-color: derive(-base-gray, 21%);
+    -fx-border-color: derive(-base-gray, 70%);
+}
+
+.choice-box {
+    -fx-text-fill: derive(-base-gray, 99%);
+    -fx-background-color: derive(-base-gray, 21%);
+    -fx-border-color: derive(-base-gray, 70%); 
 }
