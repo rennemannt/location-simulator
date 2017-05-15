@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="scene-bg" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.teamninjaneer.simulator.locationsimulator.controller.MainSceneController">
+    <top>
+        <HBox prefHeight="40.0" styleClass="menu-bg" BorderPane.alignment="CENTER_LEFT" />
+    </top>
+    <left>
+        <VBox minWidth="300.0" spacing="5.0" BorderPane.alignment="CENTER">
+            <children>
+                <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                    <children>
+                        <VBox spacing="4.0">
+                            <children>
+                                <Label text="Latitude Delta" />
+                                <TextField />
+                                <Label text="Longitude Delta" />
+                                <TextField />
+                            </children>
+                        </VBox>
+                        <VBox spacing="4.0">
+                            <children>
+                                <Label text="New Location Rate" />
+                                <HBox alignment="BASELINE_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                                    <children>
+                              <ComboBox fx:id="locRateValueComboBox" editable="true" prefWidth="80.0" />
+                                        <Label text="/" />
+                                        <ChoiceBox fx:id="locRateUomChoiceBox" prefWidth="110.0" />
+                                    </children>
+                                </HBox>
+                                <Label layoutX="10.0" layoutY="10.0" text="New File Delay" />
+                                <TextField layoutX="10.0" layoutY="31.0" />
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+            </children>
+            <BorderPane.margin>
+                <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+            </BorderPane.margin>
+        </VBox>
+    </left>
+</BorderPane>

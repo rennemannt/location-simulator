@@ -26,7 +26,7 @@ package org.teamninjaneer.simulator.locationsimulator;
 /**
  * Methods for creating location data rows.
  *
- * @author Travis Rennemann
+ * @author Travis Rennemann <rennemannt@gmail.com>
  */
 public class DataRowFactory {
 

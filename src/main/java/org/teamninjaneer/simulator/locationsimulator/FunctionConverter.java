@@ -31,7 +31,7 @@ import java.util.Random;
  * Methods for converting the functional definitions in the data row string
  * pattern.
  *
- * @author Travis Rennemann
+ * @author Travis Rennemann <rennemannt@gmail.com>
  */
 public class FunctionConverter {
 

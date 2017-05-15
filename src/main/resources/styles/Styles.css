@@ -14,14 +14,29 @@
     -fx-text-fill: white;
 }
 
-.text-field {
-    -fx-text-fill: derive(-base-gray, 99%);
-    -fx-background-color: derive(-base-gray, 21%);
-    -fx-border-color: derive(-base-gray, 70%);
-}
-
-.choice-box {
+.text-field, .choice-box, .combo-box-base, .combo-box-base:editable, .arrow-button, .context-menu, .spinner {
     -fx-text-fill: derive(-base-gray, 99%);
     -fx-background-color: derive(-base-gray, 21%);
     -fx-border-color: derive(-base-gray, 70%); 
+}
+
+.combo-box-base:editable .text-field, .combo-box-base:editable .text-field .label, .combo-box-base:editable .arrow-button {
+    -fx-text-fill: white;
+    -fx-border-width: 0;
+}
+
+/* -------------- STYLES FOR THE DEFAULT LISTVIEW-BASED COMBOBOX ------------- */
+.combo-box-popup > .list-view {
+    -fx-background-color: derive(-base-gray, 21%);
+    -fx-background-insets: 0, 1;
+    -fx-border-color: derive(-base-gray, 70%); 
+}
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell {
+    -fx-padding: 4 0 4 5;
+    /* No alternate highlighting */
+    -fx-background: derive(-base-gray, 21%);
+}
+
+.combo-box-popup > .list-view > .placeholder > .label {
+    -fx-text-fill: derive(-fx-control-inner-background,-30%);
 }
