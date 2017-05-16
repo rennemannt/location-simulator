@@ -1,51 +1,80 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="scene-bg" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.teamninjaneer.simulator.locationsimulator.controller.MainSceneController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="800.0" styleClass="scene-bg" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.teamninjaneer.simulator.locationsimulator.controller.MainSceneController">
     <top>
-        <HBox prefHeight="40.0" styleClass="menu-bg" BorderPane.alignment="CENTER_LEFT" />
+        <HBox alignment="CENTER_LEFT" prefHeight="40.0" spacing="10.0" styleClass="menu-bg" BorderPane.alignment="CENTER_LEFT">
+         <children>
+            <Button fx:id="exportButton" mnemonicParsing="false" text="export" />
+            <Button fx:id="runButton" mnemonicParsing="false" text="run" />
+         </children>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <padding>
+            <Insets left="10.0" />
+         </padding></HBox>
     </top>
     <left>
-        <VBox minWidth="300.0" spacing="5.0" BorderPane.alignment="CENTER">
+        <VBox minWidth="300.0" spacing="8.0" BorderPane.alignment="CENTER">
             <children>
-                <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0">
                     <children>
-                        <VBox spacing="4.0">
+                        <VBox spacing="8.0">
                             <children>
                                 <Label text="Latitude Delta" />
-                                <TextField />
+                        <ComboBox fx:id="latDeltaComboBox" editable="true" prefWidth="90.0" />
                                 <Label text="Longitude Delta" />
-                                <TextField />
+                        <ComboBox fx:id="lonDeltaComboBox" editable="true" prefWidth="90.0" />
                             </children>
                         </VBox>
-                        <VBox spacing="4.0">
+                        <VBox spacing="8.0">
                             <children>
                                 <Label text="New Location Rate" />
                                 <HBox alignment="BASELINE_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                                     <children>
-                              <ComboBox fx:id="locRateValueComboBox" editable="true" prefWidth="80.0" />
+                              <ComboBox fx:id="locRateValueComboBox" editable="true" prefWidth="90.0" />
                                         <Label text="/" />
-                                        <ChoiceBox fx:id="locRateUomChoiceBox" prefWidth="110.0" />
+                                        <ChoiceBox fx:id="locRateUomChoiceBox" prefWidth="125.0" />
                                     </children>
                                 </HBox>
                                 <Label layoutX="10.0" layoutY="10.0" text="New File Delay" />
-                                <TextField layoutX="10.0" layoutY="31.0" />
+                        <HBox alignment="BASELINE_LEFT" layoutX="10.0" layoutY="31.0" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                           <children>
+                              <ComboBox fx:id="newFileRateValueComboBox" editable="true" prefWidth="90.0" />
+                              <Label text="/" />
+                              <ChoiceBox fx:id="newFileRateUomChoiceBox" prefWidth="125.0" />
+                           </children>
+                        </HBox>
                             </children>
                         </VBox>
                     </children>
                 </HBox>
+            <Label text="Data Row Format" />
+            <TextField fx:id="dataRowFormatTextField" text="dt(&quot;yyyy'/MM'/dd',HH':ss':'.n&quot;), $lat, $lon, rand(5,40), rand(4,16)" />
+            <Label layoutX="10.0" layoutY="130.0" text="Export Directory" />
+            <TextField fx:id="exportDirectoryTextField" layoutX="10.0" layoutY="155.0" />
             </children>
             <BorderPane.margin>
                 <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
             </BorderPane.margin>
         </VBox>
     </left>
+   <center>
+      <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="400.0" styleClass="earth-2d" BorderPane.alignment="TOP_CENTER">
+         <BorderPane.margin>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </BorderPane.margin>
+      </StackPane>
+   </center>
 </BorderPane>
