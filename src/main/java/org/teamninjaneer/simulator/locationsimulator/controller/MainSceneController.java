@@ -1,14 +1,18 @@
 package org.teamninjaneer.simulator.locationsimulator.controller;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.stage.DirectoryChooser;
 import org.teamninjaneer.simulator.locationsimulator.model.TimeUnitOfMeasure;
 
 public class MainSceneController implements Initializable {
@@ -36,13 +40,15 @@ public class MainSceneController implements Initializable {
 
     @FXML
     private TextField exportDirectoryTextField;
-    
+
     @FXML
     private Button exportButton;
-    
+
     @FXML
     private Button runButton;
-            
+
+    @FXML
+    private Button browseButton;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -65,5 +71,19 @@ public class MainSceneController implements Initializable {
 
         lonDeltaComboBox.setItems(FXCollections.observableArrayList(0.001, 0.01, 0.1, 1.0, 5.0, 10.0, 20.0, 30.0, 40.0, 60.0));
         lonDeltaComboBox.getSelectionModel().select(1.0);
+
+        browseButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                DirectoryChooser directoryChooser = new DirectoryChooser();
+                File selectedDirectory = directoryChooser.showDialog(browseButton.getScene().getWindow());
+
+                if (selectedDirectory == null) {
+                    exportDirectoryTextField.setText("no directory selected");
+                } else {
+                    exportDirectoryTextField.setText(selectedDirectory.getAbsolutePath());
+                }
+            }
+        });
     }
 }
