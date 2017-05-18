@@ -39,14 +39,11 @@ public class FunctionConverter {
     private final static String INSUFFICIENT_PARAMS = "Not enough parameters supplied!";
     private final static String INVALID_PARAMS = "The supplied parameters are invalid for the requested function!";
 
-    // list of available functions to convert: dt = date time; rand = random with lower and upper params
-    private static final String[] supportedFunctions = new String[]{"dt", "rand"};
-
-    public static String convert(String func, Object... param) throws UnsupportedOperationException {
+    public static String convert(SupportedFunction func, Object... param) throws UnsupportedOperationException {
         String result = "";
 
-        switch (func.toLowerCase()) {
-            case "dt":
+        switch (func) {
+            case dt:
                 // the date time function requires two parameters
                 if (param.length < 2) {
                     throw new UnsupportedOperationException(INSUFFICIENT_PARAMS);
@@ -60,7 +57,7 @@ public class FunctionConverter {
                 Instant dateTime = (Instant) param[1];
                 result = convertDt(dtPattern, dateTime);
                 break;
-            case "rand":
+            case rand:
                 result = convertRand(param);
                 break;
             default:
@@ -90,14 +87,5 @@ public class FunctionConverter {
             result = String.valueOf(Math.round(Math.random() * 100));
         }
         return result;
-    }
-
-    /**
-     * Get the list of supported functions.
-     *
-     * @return
-     */
-    public static String[] getsupportedFunctions() {
-        return supportedFunctions;
     }
 }
