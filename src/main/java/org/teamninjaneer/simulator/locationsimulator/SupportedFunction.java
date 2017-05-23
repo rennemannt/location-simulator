@@ -30,7 +30,7 @@ package org.teamninjaneer.simulator.locationsimulator;
  */
 public enum SupportedFunction {
     // date time
-    dt,
-    // random with lower and upper params
-    rand
+    DT,
+    // random with optional seed and upper bound params
+    RAND
 }

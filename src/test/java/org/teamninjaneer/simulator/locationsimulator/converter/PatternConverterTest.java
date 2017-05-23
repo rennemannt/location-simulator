@@ -21,37 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.teamninjaneer.simulator.locationsimulator;
+package org.teamninjaneer.simulator.locationsimulator.converter;
 
-import org.junit.BeforeClass;
+import java.time.Instant;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.teamninjaneer.simulator.locationsimulator.model.LocationDataRow;
 
 /**
- * Unit tests for Function Converter.
+ * Unit tests for Pattern Converter.
  *
- * @author Travis Rennemann <rennemannt@gmail.com>
+ * @author Travis.Rennemann
  */
-public class FunctionConverterTest {
+public class PatternConverterTest {
 
-    public FunctionConverterTest() {
-    }
+    private static final String PATTERN = "dt(yyyy/MM/dd,HH:mm:s.SSS), $lat, $lon, rand(5,40), rand(4,16)\n";
 
-    @BeforeClass
-    public static void setUpClass() {
+    public PatternConverterTest() {
     }
 
     /**
-     * Test of convert method, of class FunctionConverter.
+     * Test of convert method, of class PatternConverter.
      */
     @Test
-    public void testConvert_dt() {
-        System.out.println("convert");
-        String func = "";
-        Object[] param = null;
-        String expResult = "";
-       // String result = FunctionConverter.convert(func, param);
-       // assertEquals(expResult, result);
-        
+    public void testConvert() {
+        LocationDataRow dataRow = new LocationDataRow(Instant.now(), 28.5, 81.25, 1.0, 1.0, PATTERN);
+
+        String result = PatternConverter.convert(dataRow);
+
+        System.out.println(result);
+        assertNotNull(result);
     }
+
 }

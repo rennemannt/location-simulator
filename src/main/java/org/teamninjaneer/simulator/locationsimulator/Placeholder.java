@@ -21,12 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.teamninjaneer.simulator.locationsimulator.model;
+package org.teamninjaneer.simulator.locationsimulator;
 
 /**
+ * The reserved variable place holder values.
  *
- * @author Travis Rennemann <rennemannt@gmail.com>
+ * @author Travis.Rennemann
  */
-public enum TimeUnitOfMeasure {
-    microsecond, millisecond, second, minute, hour, day
+public enum Placeholder {
+    // latitude
+    LAT,
+    // longitude
+    LON
 }

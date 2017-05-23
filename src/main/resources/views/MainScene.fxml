@@ -62,7 +62,7 @@
                     </children>
                 </HBox>
             <Label text="Data Row Format" />
-            <TextField fx:id="dataRowFormatTextField" text="dt(&quot;yyyy'/MM'/dd',HH':ss':'.n&quot;), $lat, $lon, rand(5,40), rand(4,16)" />
+            <TextField fx:id="dataRowFormatTextField" text="dt(yyyy/MM/dd,HH:mm:s.SSSz), $lat, $lon, rand(5,40), rand(4,16)" />
             <Label layoutX="10.0" layoutY="130.0" text="Export Directory" />
             <HBox spacing="5.0">
                <children>

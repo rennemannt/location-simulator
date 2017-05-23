@@ -21,14 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.teamninjaneer.simulator.locationsimulator;
+package org.teamninjaneer.simulator.locationsimulator.model;
+
+import java.io.Serializable;
+import java.time.Instant;
+import org.teamninjaneer.simulator.locationsimulator.converter.PatternConverter;
 
 /**
- * Methods for creating location data rows.
+ * Data model for a location data row.
  *
  * @author Travis Rennemann <rennemannt@gmail.com>
  */
-public class DataRowFactory {
+public class LocationDataRow implements Serializable {
+
+    private static final long serialVersionUID = 0L;
+
+    // date time
+    private Instant dt;
 
     // latitude
     private double lat;
@@ -48,7 +57,8 @@ public class DataRowFactory {
     /**
      * Construct.
      */
-    public DataRowFactory() {
+    public LocationDataRow() {
+        this.dt = Instant.now();
         this.lat = 0;
         this.lon = 0;
         this.latDelta = 1;
@@ -59,13 +69,15 @@ public class DataRowFactory {
     /**
      * Construct the Data Row Factory.
      *
+     * @param dt The date time for the event
      * @param lat The latitude to start at
      * @param lon The longitude to start at
      * @param latDelta The amount of latitudinal change for each iteration
      * @param lonDelta The amount of longitudinal change for each iteration
      * @param pattern The string pattern for each data row
      */
-    public DataRowFactory(double lat, double lon, double latDelta, double lonDelta, String pattern) {
+    public LocationDataRow(Instant dt, double lat, double lon, double latDelta, double lonDelta, String pattern) {
+        this.dt = dt;
         this.lat = lat;
         this.lon = lon;
         this.latDelta = latDelta;
@@ -73,15 +85,12 @@ public class DataRowFactory {
         this.pattern = pattern;
     }
 
-    /**
-     * Create the next data row.
-     *
-     * @return
-     */
-    public String next() {
-        String row = "";
+    public Instant getDt() {
+        return dt;
+    }
 
-        return row;
+    public void setDt(Instant dt) {
+        this.dt = dt;
     }
 
     public double getLat() {
@@ -122,5 +131,10 @@ public class DataRowFactory {
 
     public void setPattern(String pattern) {
         this.pattern = pattern;
+    }
+
+    @Override
+    public String toString() {
+        return PatternConverter.convert(this);
     }
 }
