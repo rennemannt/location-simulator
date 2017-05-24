@@ -35,6 +35,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 
@@ -72,6 +73,9 @@ public class MainSceneController implements Initializable {
 
     @FXML
     private Button browseButton;
+    
+    @FXML
+    private Label statusLabel;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -108,5 +112,7 @@ public class MainSceneController implements Initializable {
                 }
             }
         });
+        
+        statusLabel.setText("Ready");
     }
 }
