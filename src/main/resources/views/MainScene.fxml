@@ -17,98 +17,104 @@
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="800.0" styleClass="scene-bg" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.teamninjaneer.simulator.locationsimulator.controller.MainSceneController">
     <top>
         <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="10.0" styleClass="menu-bg" BorderPane.alignment="CENTER_LEFT">
-         <children>
-            <Button fx:id="exportButton" cache="true" defaultButton="true" mnemonicParsing="false" styleClass="export-ico" text="export" />
-            <Button fx:id="runButton" cache="true" mnemonicParsing="false" styleClass="run-ico" text="run" />
-         </children>
-         <BorderPane.margin>
-            <Insets />
-         </BorderPane.margin>
-         <padding>
-            <Insets left="10.0" />
-         </padding></HBox>
+            <children>
+                <Button fx:id="exportButton" cache="true" defaultButton="true" mnemonicParsing="false" styleClass="export-ico" text="export" />
+                <Button fx:id="runButton" cache="true" mnemonicParsing="false" styleClass="run-ico" text="run" />
+            </children>
+            <BorderPane.margin>
+                <Insets />
+            </BorderPane.margin>
+            <padding>
+                <Insets left="10.0" />
+            </padding>
+        </HBox>
     </top>
     <left>
         <VBox minWidth="300.0" spacing="8.0" BorderPane.alignment="CENTER">
             <children>
-            <Label layoutX="10.0" layoutY="150.0" text="Event Time" />
-            <DatePicker />
+                <Label layoutX="10.0" layoutY="150.0" text="Event Date Time" />
+            <HBox spacing="8.0">
+               <children>
+                      <DatePicker fx:id="eventDatePicker" prefWidth="125.0" />
+                  <TextField fx:id="eventTimeTextField" prefWidth="65.0" promptText="HH:mm:s" text="00:00:00" />
+               </children>
+            </HBox>
                 <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0">
                     <children>
                         <VBox spacing="8.0">
-                     <children>
-                        <Label text="Latitude" />
-                        <TextField text="0.0" />
-                        <Label text="Longitude" />
-                        <TextField layoutX="10.0" layoutY="39.0" text="0.0" />
-                     </children>
+                            <children>
+                                <Label text="Latitude" />
+                                <TextField fx:id="latTextField" text="0.0" />
+                                <Label text="Longitude" />
+                                <TextField fx:id="lonTextField" layoutX="10.0" layoutY="39.0" text="0.0" />
+                            </children>
                         </VBox>
                         <VBox minWidth="125.0" spacing="8.0">
                             <children>
                                 <Label text="Latitude Delta" />
-                        <ComboBox fx:id="latDeltaComboBox" editable="true" prefWidth="90.0" />
+                                <ComboBox fx:id="latDeltaComboBox" editable="true" prefWidth="90.0" />
                                 <Label text="Longitude Delta" />
-                        <ComboBox fx:id="lonDeltaComboBox" editable="true" prefWidth="90.0" />
+                                <ComboBox fx:id="lonDeltaComboBox" editable="true" prefWidth="90.0" />
                             </children>
                         </VBox>
                     </children>
                 </HBox>
-                    <Label text="New Location Rate" />
-                    <HBox alignment="BASELINE_LEFT" spacing="5.0">
-                        <children>
-                  <ComboBox fx:id="locRateValueComboBox" editable="true" prefWidth="90.0" />
-                            <Label text="/" />
-                            <ChoiceBox fx:id="locRateUomChoiceBox" prefWidth="125.0" />
-                        </children>
-                    </HBox>
-                    <Label text="New File Delay" />
-            <HBox alignment="BASELINE_LEFT" spacing="5.0">
-               <children>
-                  <ComboBox fx:id="newFileRateValueComboBox" editable="true" prefWidth="90.0" />
-                  <Label text="/" />
-                  <ChoiceBox fx:id="newFileRateUomChoiceBox" prefWidth="125.0" />
-               </children>
-            </HBox>
+                <Label text="New Location Rate" />
+                <HBox alignment="BASELINE_LEFT" spacing="5.0">
+                    <children>
+                        <ComboBox fx:id="locRateValueComboBox" editable="true" prefWidth="90.0" />
+                        <Label text="/" />
+                        <ChoiceBox fx:id="locRateUomChoiceBox" prefWidth="125.0" />
+                    </children>
+                </HBox>
+                <Label text="New File Delay" />
+                <HBox alignment="BASELINE_LEFT" spacing="5.0">
+                    <children>
+                        <ComboBox fx:id="newFileRateValueComboBox" editable="true" prefWidth="90.0" />
+                        <Label text="/" />
+                        <ChoiceBox fx:id="newFileRateUomChoiceBox" prefWidth="125.0" />
+                    </children>
+                </HBox>
             </children>
             <BorderPane.margin>
                 <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
             </BorderPane.margin>
         </VBox>
     </left>
-   <center>
-      <VBox spacing="8.0" BorderPane.alignment="TOP_CENTER">
-         <BorderPane.margin>
-            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-         </BorderPane.margin>
-         <children>
-            <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="400.0" styleClass="earth-2d" />
-            <Label text="Data Row Format" />
-            <TextField fx:id="dataRowFormatTextField" text="dt(yyyy/MM/dd,HH:mm:s.SSSz), $lat, $lon, rand(5,40), rand(4,16)" />
-            <Label text="Export Directory" />
-            <HBox spacing="5.0">
-               <children>
-                  <TextField fx:id="exportDirectoryTextField" minWidth="300.0" HBox.hgrow="ALWAYS" />
-                  <Button fx:id="browseButton" cache="true" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" scaleShape="false" styleClass="browse-ico" text="browse">
-                     <tooltip>
-                        <Tooltip text="browse for directory" />
-                     </tooltip>
-                  </Button>
-               </children>
-            </HBox>
-         </children>
-      </VBox>
-   </center>
-   <bottom>
-      <AnchorPane styleClass="menu-bg" BorderPane.alignment="CENTER_LEFT">
-         <BorderPane.margin>
-            <Insets />
-         </BorderPane.margin>
-         <children>
-            <Label fx:id="statusLabel" text="Ready" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-         </children>
-         <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </padding>
-      </AnchorPane>
-   </bottom>
+    <center>
+        <VBox spacing="8.0" BorderPane.alignment="TOP_CENTER">
+            <BorderPane.margin>
+                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+            </BorderPane.margin>
+            <children>
+                <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="400.0" styleClass="earth-2d" />
+                <Label text="Data Row Format" />
+                <TextField fx:id="dataRowFormatTextField" text="dt(yyyy/MM/dd,HH:mm:s.SSSz), $lat, $lon, rand(5,40), rand(4,16)" />
+                <Label text="Export Directory" />
+                <HBox spacing="5.0">
+                    <children>
+                        <TextField fx:id="exportDirectoryTextField" minWidth="300.0" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="browseButton" cache="true" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" scaleShape="false" styleClass="browse-ico" text="browse">
+                            <tooltip>
+                                <Tooltip text="browse for directory" />
+                            </tooltip>
+                        </Button>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </center>
+    <bottom>
+        <AnchorPane styleClass="menu-bg" BorderPane.alignment="CENTER_LEFT">
+            <BorderPane.margin>
+                <Insets />
+            </BorderPane.margin>
+            <children>
+                <Label fx:id="statusLabel" text="Ready" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+            </children>
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+        </AnchorPane>
+    </bottom>
 </BorderPane>

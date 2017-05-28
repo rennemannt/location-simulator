@@ -25,21 +25,42 @@ package org.teamninjaneer.simulator.locationsimulator.controller;
 
 import java.io.File;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.DepthTest;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
+import org.controlsfx.validation.Severity;
+import org.controlsfx.validation.ValidationSupport;
+import org.controlsfx.validation.Validator;
 
 public class MainSceneController implements Initializable {
+
+    private final ValidationSupport validationSupport = new ValidationSupport();
+
+    @FXML
+    private DatePicker eventDatePicker;
+
+    @FXML
+    private TextField eventTimeTextField;
+
+    @FXML
+    private TextField latTextField;
+
+    @FXML
+    private TextField lonTextField;
 
     @FXML
     private ComboBox<Integer> locRateValueComboBox;
@@ -73,21 +94,24 @@ public class MainSceneController implements Initializable {
 
     @FXML
     private Button browseButton;
-    
+
     @FXML
     private Label statusLabel;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        eventDatePicker.setValue(LocalDate.now());
+        eventDatePicker.setDepthTest(DepthTest.ENABLE);
+
         locRateUomChoiceBox.getItems().setAll(TimeUnit.values());
         locRateUomChoiceBox.setValue(TimeUnit.MILLISECONDS);
-        locRateUomChoiceBox.getSelectionModel().selectFirst();
+        locRateUomChoiceBox.getSelectionModel().select(TimeUnit.MILLISECONDS);
 
         locRateValueComboBox.setItems(FXCollections.observableArrayList(1, 2, 5, 10, 20, 30, 40, 50, 100, 200));
         locRateValueComboBox.getSelectionModel().selectFirst();
 
         newFileRateUomChoiceBox.getItems().setAll(TimeUnit.values());
-        newFileRateUomChoiceBox.setValue(TimeUnit.MILLISECONDS);
+        newFileRateUomChoiceBox.setValue(TimeUnit.MINUTES);
         newFileRateUomChoiceBox.getSelectionModel().select(TimeUnit.MINUTES);
 
         newFileRateValueComboBox.setItems(FXCollections.observableArrayList(1, 2, 3, 5, 10, 20, 30, 40, 50, 100));
@@ -112,7 +136,51 @@ public class MainSceneController implements Initializable {
                 }
             }
         });
-        
+
+        exportButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                validationSupport.redecorate();
+            }
+        });
+
         statusLabel.setText("Ready");
+        registerValidators();
+    }
+
+    /**
+     * Add validators to all input controls.
+     */
+    private void registerValidators() {
+        final Validator intValidator = Validator.createPredicateValidator(new Predicate<Integer>() {
+            @Override
+            public boolean test(Integer t) {
+                return t > 0;
+            }
+        }, "value must be an integer greater than 0");
+
+        final Validator doubleValidator = Validator.createPredicateValidator(new Predicate<Double>() {
+            @Override
+            public boolean test(Double t) {
+                return t >= 0.0;
+            }
+        }, "value must be a numeric value greater than or equal to 0");
+
+        validationSupport.registerValidator(eventDatePicker, true, Validator.createEmptyValidator("a valid date must be provided"));
+        validationSupport.registerValidator(eventTimeTextField, true, Validator.createRegexValidator("time must follow the format HH:mm:s", "\\d+:\\d+:\\d+", Severity.ERROR));
+        validationSupport.registerValidator(locRateValueComboBox, true, intValidator);
+        validationSupport.registerValidator(newFileRateValueComboBox, true, intValidator);
+        validationSupport.registerValidator(latDeltaComboBox, true, doubleValidator);
+        validationSupport.registerValidator(lonDeltaComboBox, true, doubleValidator);
+        validationSupport.registerValidator(latTextField, true, Validator.createRegexValidator(
+                "latitude must be given in decimal degrees format between 90 and -90", 
+                "^(\\+|-)?(?:90(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\\.[0-9]{1,6})?))$", 
+                Severity.ERROR));
+        validationSupport.registerValidator(lonTextField, true, Validator.createRegexValidator(
+                "longitude must be given in decimal degrees format between 180 and -180", 
+                "^(\\+|-)?(?:180(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\\.[0-9]{1,6})?))$", 
+                Severity.ERROR));
+        validationSupport.registerValidator(dataRowFormatTextField, true, Validator.createEmptyValidator("data row format must be provided"));
+        validationSupport.registerValidator(exportDirectoryTextField, true, Validator.createEmptyValidator("an export directory must be given"));
     }
 }
