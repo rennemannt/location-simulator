@@ -14,12 +14,18 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="800.0" styleClass="scene-bg" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.teamninjaneer.simulator.locationsimulator.controller.MainSceneController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="800.0" styleClass="scene-bg" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.teamninjaneer.simulator.locationsimulator.views.MainViewController">
     <top>
         <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="10.0" styleClass="menu-bg" BorderPane.alignment="CENTER_LEFT">
             <children>
-                <Button fx:id="exportButton" cache="true" defaultButton="true" mnemonicParsing="false" styleClass="export-ico" text="export" />
-                <Button fx:id="runButton" cache="true" mnemonicParsing="false" styleClass="run-ico" text="run" />
+                <Button fx:id="exportButton" cache="true" defaultButton="true" mnemonicParsing="false" styleClass="export-ico" text="export">
+               <tooltip>
+                  <Tooltip text="export a single file" />
+               </tooltip></Button>
+                <Button fx:id="runButton" cache="true" mnemonicParsing="false" styleClass="run-ico" text="run">
+               <tooltip>
+                  <Tooltip text="run the new file simulator" />
+               </tooltip></Button>
             </children>
             <BorderPane.margin>
                 <Insets />
@@ -35,8 +41,14 @@
                 <Label layoutX="10.0" layoutY="150.0" text="Event Date Time" />
             <HBox spacing="8.0">
                <children>
-                      <DatePicker fx:id="eventDatePicker" prefWidth="125.0" />
-                  <TextField fx:id="eventTimeTextField" prefWidth="65.0" promptText="HH:mm:s" text="00:00:00" />
+                      <DatePicker fx:id="eventDatePicker" prefWidth="125.0">
+                     <tooltip>
+                        <Tooltip text="date in D/M/Y format" />
+                     </tooltip></DatePicker>
+                  <TextField fx:id="eventTimeTextField" prefWidth="65.0" promptText="HH:mm:s" text="00:00:00">
+                     <tooltip>
+                        <Tooltip text="time in H:m:s format" />
+                     </tooltip></TextField>
                </children>
             </HBox>
                 <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0">
@@ -44,17 +56,29 @@
                         <VBox spacing="8.0">
                             <children>
                                 <Label text="Latitude" />
-                                <TextField fx:id="latTextField" text="0.0" />
+                                <TextField fx:id="latTextField" text="0.0">
+                           <tooltip>
+                              <Tooltip text="latitude in decimal degrees format" />
+                           </tooltip></TextField>
                                 <Label text="Longitude" />
-                                <TextField fx:id="lonTextField" layoutX="10.0" layoutY="39.0" text="0.0" />
+                                <TextField fx:id="lonTextField" layoutX="10.0" layoutY="39.0" text="0.0">
+                           <tooltip>
+                              <Tooltip text="longitude in decimal degrees format" />
+                           </tooltip></TextField>
                             </children>
                         </VBox>
                         <VBox minWidth="125.0" spacing="8.0">
                             <children>
                                 <Label text="Latitude Delta" />
-                                <ComboBox fx:id="latDeltaComboBox" editable="true" prefWidth="90.0" />
+                                <ComboBox fx:id="latDeltaComboBox" editable="true" prefWidth="90.0">
+                           <tooltip>
+                              <Tooltip text="latitude change in decimal format" />
+                           </tooltip></ComboBox>
                                 <Label text="Longitude Delta" />
-                                <ComboBox fx:id="lonDeltaComboBox" editable="true" prefWidth="90.0" />
+                                <ComboBox fx:id="lonDeltaComboBox" editable="true" prefWidth="90.0">
+                           <tooltip>
+                              <Tooltip text="longitude change in decimal format" />
+                           </tooltip></ComboBox>
                             </children>
                         </VBox>
                     </children>
@@ -62,7 +86,10 @@
                 <Label text="New Location Rate" />
                 <HBox alignment="BASELINE_LEFT" spacing="5.0">
                     <children>
-                        <ComboBox fx:id="locRateValueComboBox" editable="true" prefWidth="90.0" />
+                        <ComboBox fx:id="locRateValueComboBox" editable="true" prefWidth="90.0">
+                     <tooltip>
+                        <Tooltip text="the amount of time between each data row" />
+                     </tooltip></ComboBox>
                         <Label text="/" />
                         <ChoiceBox fx:id="locRateUomChoiceBox" prefWidth="125.0" />
                     </children>
@@ -70,7 +97,10 @@
                 <Label text="New File Delay" />
                 <HBox alignment="BASELINE_LEFT" spacing="5.0">
                     <children>
-                        <ComboBox fx:id="newFileRateValueComboBox" editable="true" prefWidth="90.0" />
+                        <ComboBox fx:id="newFileRateValueComboBox" editable="true" prefWidth="90.0">
+                     <tooltip>
+                        <Tooltip text="time between the creation of new files" />
+                     </tooltip></ComboBox>
                         <Label text="/" />
                         <ChoiceBox fx:id="newFileRateUomChoiceBox" prefWidth="125.0" />
                     </children>
@@ -87,13 +117,19 @@
                 <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
             </BorderPane.margin>
             <children>
-                <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="400.0" styleClass="earth-2d" />
+            <StackPane fx:id="earthStackPane" prefHeight="200.0" prefWidth="400.0" styleClass="earth-2d" />
                 <Label text="Data Row Format" />
-                <TextField fx:id="dataRowFormatTextField" text="dt(yyyy/MM/dd,HH:mm:s.SSSz), $lat, $lon, rand(5,40), rand(4,16)" />
+                <TextField fx:id="dataRowFormatTextField" text="dt(yyyy/MM/dd,HH:mm:s.SSSz), $lat, $lon, rand(5,40), rand(4,16)">
+               <tooltip>
+                  <Tooltip text="string representing the format of each data row in the output text file" />
+               </tooltip></TextField>
                 <Label text="Export Directory" />
                 <HBox spacing="5.0">
                     <children>
-                        <TextField fx:id="exportDirectoryTextField" minWidth="300.0" HBox.hgrow="ALWAYS" />
+                        <TextField fx:id="exportDirectoryTextField" minWidth="300.0" HBox.hgrow="ALWAYS">
+                     <tooltip>
+                        <Tooltip text="directory where files should be output" />
+                     </tooltip></TextField>
                         <Button fx:id="browseButton" cache="true" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" scaleShape="false" styleClass="browse-ico" text="browse">
                             <tooltip>
                                 <Tooltip text="browse for directory" />

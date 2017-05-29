@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.teamninjaneer.simulator.locationsimulator.controller;
+package org.teamninjaneer.simulator.locationsimulator.views;
 
 import java.io.File;
 import java.net.URL;
@@ -41,14 +41,16 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
 import org.controlsfx.validation.Severity;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
 
-public class MainSceneController implements Initializable {
+public class MainViewController implements Initializable {
 
     private final ValidationSupport validationSupport = new ValidationSupport();
+    private EarthViewController earth;
 
     @FXML
     private DatePicker eventDatePicker;
@@ -93,6 +95,9 @@ public class MainSceneController implements Initializable {
     private Button runButton;
 
     @FXML
+    private StackPane earthStackPane;
+
+    @FXML
     private Button browseButton;
 
     @FXML
@@ -100,6 +105,8 @@ public class MainSceneController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        earth = new EarthViewController(earthStackPane);
+
         eventDatePicker.setValue(LocalDate.now());
         eventDatePicker.setDepthTest(DepthTest.ENABLE);
 
@@ -140,7 +147,7 @@ public class MainSceneController implements Initializable {
         exportButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                validationSupport.redecorate();
+                earth.movePlacemark(28.0, -81.0);
             }
         });
 
@@ -173,12 +180,12 @@ public class MainSceneController implements Initializable {
         validationSupport.registerValidator(latDeltaComboBox, true, doubleValidator);
         validationSupport.registerValidator(lonDeltaComboBox, true, doubleValidator);
         validationSupport.registerValidator(latTextField, true, Validator.createRegexValidator(
-                "latitude must be given in decimal degrees format between 90 and -90", 
-                "^(\\+|-)?(?:90(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\\.[0-9]{1,6})?))$", 
+                "latitude must be given in decimal degrees format between 90 and -90",
+                "^(\\+|-)?(?:90(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\\.[0-9]{1,6})?))$",
                 Severity.ERROR));
         validationSupport.registerValidator(lonTextField, true, Validator.createRegexValidator(
-                "longitude must be given in decimal degrees format between 180 and -180", 
-                "^(\\+|-)?(?:180(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\\.[0-9]{1,6})?))$", 
+                "longitude must be given in decimal degrees format between 180 and -180",
+                "^(\\+|-)?(?:180(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\\.[0-9]{1,6})?))$",
                 Severity.ERROR));
         validationSupport.registerValidator(dataRowFormatTextField, true, Validator.createEmptyValidator("data row format must be provided"));
         validationSupport.registerValidator(exportDirectoryTextField, true, Validator.createEmptyValidator("an export directory must be given"));
