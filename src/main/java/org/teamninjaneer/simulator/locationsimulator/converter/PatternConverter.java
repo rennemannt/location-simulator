@@ -39,10 +39,13 @@ public class PatternConverter {
 
     private static final String INSUFFICIENT_PARAMS = "LocationDataRow and its pattern property cannot be null!";
     private static final Pattern FUNC_NAME_PATTERN = Pattern.compile("(\\w+)");
+    // random function regex pattern
     private static final Pattern RAND_PATTERN = Pattern.compile("(\\brand\\(\\b[^)]+\\))");
     private static final Pattern RAND_PARAM_PATTERN = Pattern.compile("\\brand\\(\\b([^)]+)\\)");
+    // date time function regex pattern
     private static final Pattern DT_PATTERN = Pattern.compile("(\\bdt\\(\\b[^)]+\\))");
     private static final Pattern DT_PARAM_PATTERN = Pattern.compile("\\bdt\\(\\b([^)]+)\\)");
+    // registered/supported functions
     private static final Map<Pattern, Pattern> REGISTERED_FUNCS = new HashMap<>();
 
     static {
@@ -93,22 +96,21 @@ public class PatternConverter {
                     SupportedFunction sFunc;
                     String funcResult;
                     if (foundFuncName && funcNameMatcher.groupCount() > 0) {
-                        sFunc = SupportedFunction.valueOf(funcNameMatcher.group(1).toUpperCase());
-                    } else {
-                        //TODO: throw error if we can't determine which function to run
-                        continue;
+                        for (int x = 1; x < funcNameMatcher.groupCount(); x++) {
+                            sFunc = SupportedFunction.valueOf(funcNameMatcher.group(x).toUpperCase());
+                            switch (sFunc) {
+                                case DT:
+                                    funcResult = FunctionConverter.convertDt(params, dataRow.getDt());
+                                    break;
+                                case RAND:
+                                    funcResult = FunctionConverter.convertRand(params);
+                                    break;
+                                default:
+                                    funcResult = "ERROR!";
+                            }
+                            result = result.replace(func, funcResult);
+                        }
                     }
-                    switch (sFunc) {
-                        case DT:
-                            funcResult = FunctionConverter.convertDt(params, dataRow.getDt());
-                            break;
-                        case RAND:
-                            funcResult = FunctionConverter.convertRand(params);
-                            break;
-                        default:
-                            funcResult = "ERROR!";
-                    }
-                    result = result.replace(func, funcResult);
                 }
             }
         }
