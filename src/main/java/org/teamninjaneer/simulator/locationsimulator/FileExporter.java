@@ -35,6 +35,7 @@ import java.util.logging.Logger;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import org.teamninjaneer.simulator.locationsimulator.converter.PatternConverter;
 import org.teamninjaneer.simulator.locationsimulator.model.LocationDataRow;
 
@@ -45,16 +46,17 @@ import org.teamninjaneer.simulator.locationsimulator.model.LocationDataRow;
  */
 public class FileExporter {
 
-    private final Logger logger = Logger.getGlobal();
-    private LocationDataRow locDataRow;
-    private String exportPath;
-    private String fileExt;
-    private Duration newLocRate;
-    private Duration newFileRate;
-    private Timer timer = new Timer();
+    private static final Logger LOGGER = Logger.getGlobal();
+    private final LocationDataRow locDataRow;
+    private final String exportPath;
+    private final String fileExt;
+    private final Duration newLocRate;
+    private final Duration newFileRate;
+    private final Timer timer = new Timer();
     private final ObjectProperty<Instant> dtProperty = new SimpleObjectProperty<>();
     private final SimpleDoubleProperty latProperty = new SimpleDoubleProperty(0.0);
     private final SimpleDoubleProperty lonProperty = new SimpleDoubleProperty(0.0);
+    private final SimpleStringProperty statusProperty = new SimpleStringProperty("Ready");
 
     /**
      * Construct file exporter.
@@ -87,7 +89,7 @@ public class FileExporter {
                 try {
                     export();
                 } catch (IOException e) {
-                    logger.log(Level.SEVERE, "Failed to export file!", e);
+                    LOGGER.log(Level.SEVERE, "Failed to export file!", e);
                 }
             }
         }, 0, newFileRate.toMillis());
@@ -118,7 +120,7 @@ public class FileExporter {
      */
     private String nextLocDataRows() {
         StringBuilder dataRows = new StringBuilder();
-        long rowCount = Math.floorMod(newLocRate.toMillis(), newFileRate.toMillis());
+        long rowCount = Math.floorMod(newFileRate.toMillis(), newLocRate.toMillis());
         for (int i = 0; i < rowCount; i++) {
             // increment values
             locDataRow.setDt(locDataRow.getDt().plusMillis(newLocRate.toMillis()));
@@ -130,4 +132,21 @@ public class FileExporter {
         }
         return dataRows.toString();
     }
+
+    public ObjectProperty<Instant> getDtProperty() {
+        return dtProperty;
+    }
+
+    public SimpleDoubleProperty getLatProperty() {
+        return latProperty;
+    }
+
+    public SimpleDoubleProperty getLonProperty() {
+        return lonProperty;
+    }
+
+    public SimpleStringProperty getStatusProperty() {
+        return statusProperty;
+    }
+
 }

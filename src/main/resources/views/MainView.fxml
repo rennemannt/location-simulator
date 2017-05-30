@@ -45,7 +45,7 @@
                      <tooltip>
                         <Tooltip text="date in D/M/Y format" />
                      </tooltip></DatePicker>
-                  <TextField fx:id="eventTimeTextField" prefWidth="65.0" promptText="HH:mm:s" text="00:00:00">
+                  <TextField fx:id="eventTimeTextField" prefWidth="80.0" promptText="HH:mm:s" text="00:00:00">
                      <tooltip>
                         <Tooltip text="time in H:m:s format" />
                      </tooltip></TextField>
@@ -91,7 +91,7 @@
                         <Tooltip text="the amount of time between each data row" />
                      </tooltip></ComboBox>
                         <Label text="/" />
-                        <ChoiceBox fx:id="locRateUomChoiceBox" prefWidth="125.0" />
+                        <ChoiceBox fx:id="locRateUomChoiceBox" prefWidth="140.0" />
                     </children>
                 </HBox>
                 <Label text="New File Delay" />
@@ -102,7 +102,7 @@
                         <Tooltip text="time between the creation of new files" />
                      </tooltip></ComboBox>
                         <Label text="/" />
-                        <ChoiceBox fx:id="newFileRateUomChoiceBox" prefWidth="125.0" />
+                        <ChoiceBox fx:id="newFileRateUomChoiceBox" prefWidth="140.0" />
                     </children>
                 </HBox>
             </children>

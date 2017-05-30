@@ -32,7 +32,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalUnit;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
@@ -68,8 +67,8 @@ import org.teamninjaneer.simulator.locationsimulator.model.LocationDataRow;
 
 public class MainViewController implements Initializable {
 
-    private final Logger logger = Logger.getGlobal();
-    private final static DateTimeFormatter ISO_TIME = DateTimeFormatter.ISO_LOCAL_TIME;
+    private static final Logger LOGGER = Logger.getGlobal();
+    private final static DateTimeFormatter ISO_TIME = DateTimeFormatter.ofPattern("HH:mm:ss");
     private final ValidationSupport validationSupport = new ValidationSupport();
     private final LocationDataRow locDataRow = new LocationDataRow();
     private final SimpleStringProperty status = new SimpleStringProperty("Ready");
@@ -78,121 +77,121 @@ public class MainViewController implements Initializable {
     private final SimpleDoubleProperty lonProperty = new SimpleDoubleProperty(0.0);
     private FileExporter exporter = null;
     private EarthViewController earth;
-    
+
     @FXML
     private DatePicker eventDatePicker;
-    
+
     @FXML
     private TextField eventTimeTextField;
-    
+
     @FXML
     private TextField latTextField;
-    
+
     @FXML
     private TextField lonTextField;
-    
+
     @FXML
     private ComboBox<Integer> locRateValueComboBox;
-    
+
     @FXML
     private ChoiceBox<TimeUnit> locRateUomChoiceBox;
-    
+
     @FXML
     private ComboBox<Integer> newFileRateValueComboBox;
-    
+
     @FXML
     private ChoiceBox<TimeUnit> newFileRateUomChoiceBox;
-    
+
     @FXML
     private ComboBox<Double> latDeltaComboBox;
-    
+
     @FXML
     private ComboBox<Double> lonDeltaComboBox;
-    
+
     @FXML
     private TextField dataRowFormatTextField;
-    
+
     @FXML
     private TextField exportDirectoryTextField;
-    
+
     @FXML
     private TextField fileExtensionTextField;
-    
+
     @FXML
     private Button exportButton;
-    
+
     @FXML
     private Button runButton;
-    
+
     @FXML
     private StackPane earthStackPane;
-    
+
     @FXML
     private Button browseButton;
-    
+
     @FXML
     private Label statusLabel;
-    
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         earth = new EarthViewController(earthStackPane);
-        
+
         eventDatePicker.setValue(LocalDate.now());
         eventDatePicker.setDepthTest(DepthTest.ENABLE);
-        
+
         dtProperty.addListener(new ChangeListener<Instant>() {
             @Override
             public void changed(ObservableValue<? extends Instant> observable, Instant oldValue, Instant newValue) {
                 locDataRow.setDt(newValue);
                 // update the form fields for date and time
                 eventDatePicker.setValue(LocalDateTime.ofInstant(newValue, ZoneOffset.UTC).toLocalDate());
-                eventTimeTextField.setText(ISO_TIME.format(newValue));
+                eventTimeTextField.setText(LocalDateTime.ofInstant(newValue, ZoneOffset.UTC).toLocalTime().format(ISO_TIME));
             }
         });
-        
+
         locRateUomChoiceBox.getItems().setAll(TimeUnit.values());
         locRateUomChoiceBox.setValue(TimeUnit.MILLISECONDS);
         locRateUomChoiceBox.getSelectionModel().select(TimeUnit.MILLISECONDS);
-        
+
         locRateValueComboBox.setItems(FXCollections.observableArrayList(1, 2, 5, 10, 20, 30, 40, 50, 100, 200));
         locRateValueComboBox.getSelectionModel().selectFirst();
-        
+
         newFileRateUomChoiceBox.getItems().setAll(TimeUnit.values());
         newFileRateUomChoiceBox.setValue(TimeUnit.MINUTES);
         newFileRateUomChoiceBox.getSelectionModel().select(TimeUnit.MINUTES);
-        
+
         newFileRateValueComboBox.setItems(FXCollections.observableArrayList(1, 2, 3, 5, 10, 20, 30, 40, 50, 100));
         newFileRateValueComboBox.getSelectionModel().select(1);
-        
+
         latTextField.textProperty().bindBidirectional(latProperty, new NumberStringConverter());
         lonTextField.textProperty().bindBidirectional(lonProperty, new NumberStringConverter());
-        
+
         latProperty.addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 earth.movePlacemark((double) newValue, lonProperty.get());
             }
         });
-        
+
         lonProperty.addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 earth.movePlacemark(latProperty.get(), (double) newValue);
             }
         });
-        
+
         latDeltaComboBox.setItems(FXCollections.observableArrayList(0.001, 0.01, 0.1, 1.0, 5.0, 10.0, 20.0, 30.0, 40.0, 60.0));
         latDeltaComboBox.getSelectionModel().select(1.0);
-        
+
         lonDeltaComboBox.setItems(FXCollections.observableArrayList(0.001, 0.01, 0.1, 1.0, 5.0, 10.0, 20.0, 30.0, 40.0, 60.0));
         lonDeltaComboBox.getSelectionModel().select(1.0);
-        
+
         browseButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 DirectoryChooser directoryChooser = new DirectoryChooser();
                 File selectedDirectory = directoryChooser.showDialog(browseButton.getScene().getWindow());
-                
+
                 if (selectedDirectory == null) {
                     exportDirectoryTextField.setText("no directory selected");
                 } else {
@@ -200,7 +199,7 @@ public class MainViewController implements Initializable {
                 }
             }
         });
-        
+
         exportButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -215,23 +214,24 @@ public class MainViewController implements Initializable {
                             exportDirectoryTextField.getText(),
                             newLocRate,
                             newFileRate);
+                    status.bindBidirectional(exporter.getStatusProperty());
                 }
                 try {
                     exporter.export();
                 } catch (IOException e) {
                     status.set("Failed to export file!");
-                    logger.log(Level.SEVERE, "Failed to export file", e);
+                    LOGGER.log(Level.SEVERE, "Failed to export file", e);
                 }
             }
         });
-        
+
         runButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 updateLocDataRow();
             }
         });
-        
+
         statusLabel.textProperty().bind(status);
         registerValidators();
     }
@@ -246,14 +246,14 @@ public class MainViewController implements Initializable {
                 return t > 0;
             }
         }, "value must be an integer greater than 0");
-        
+
         final Validator doubleValidator = Validator.createPredicateValidator(new Predicate<Double>() {
             @Override
             public boolean test(Double t) {
                 return t >= 0.0;
             }
         }, "value must be a numeric value greater than or equal to 0");
-        
+
         validationSupport.registerValidator(eventDatePicker, true, Validator.createEmptyValidator("a valid date must be provided"));
         validationSupport.registerValidator(eventTimeTextField, true, Validator.createRegexValidator("time must follow the format HH:mm:s", "\\d+:\\d+:\\d+", Severity.ERROR));
         validationSupport.registerValidator(locRateValueComboBox, true, intValidator);
@@ -270,6 +270,7 @@ public class MainViewController implements Initializable {
                 Severity.ERROR));
         validationSupport.registerValidator(dataRowFormatTextField, true, Validator.createEmptyValidator("data row format must be provided"));
         validationSupport.registerValidator(exportDirectoryTextField, true, Validator.createEmptyValidator("an export directory must be given"));
+        validationSupport.initInitialDecoration();
     }
 
     /**
@@ -291,7 +292,7 @@ public class MainViewController implements Initializable {
         // update the lat and lon deltas
         locDataRow.setLatDelta(latDeltaComboBox.getValue());
         locDataRow.setLonDelta(lonDeltaComboBox.getValue());
-        
+
         locDataRow.setPattern(dataRowFormatTextField.getText());
     }
 }
