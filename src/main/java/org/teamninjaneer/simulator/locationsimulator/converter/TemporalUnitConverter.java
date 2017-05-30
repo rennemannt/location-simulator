@@ -21,16 +21,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.teamninjaneer.simulator.locationsimulator;
+package org.teamninjaneer.simulator.locationsimulator.converter;
+
+import java.time.temporal.ChronoUnit;
+import java.util.concurrent.TimeUnit;
 
 /**
- * The supported function names enumeration.
+ * Convert the time unit.
  *
  * @author Travis Rennemann <rennemannt@gmail.com>
  */
-public enum SupportedFunction {
-    // date time
-    DT,
-    // random with optional seed and upper bound params
-    RAND
+public class TemporalUnitConverter {
+
+    public static ChronoUnit convert(TimeUnit tu) {
+        if (tu == null) {
+            return null;
+        }
+        switch (tu) {
+            case DAYS:
+                return ChronoUnit.DAYS;
+            case HOURS:
+                return ChronoUnit.HOURS;
+            case MINUTES:
+                return ChronoUnit.MINUTES;
+            case SECONDS:
+                return ChronoUnit.SECONDS;
+            case MICROSECONDS:
+                return ChronoUnit.MICROS;
+            case MILLISECONDS:
+                return ChronoUnit.MILLIS;
+            case NANOSECONDS:
+                return ChronoUnit.NANOS;
+            default:
+                assert false : "there are no other TimeUnit ordinal values";
+                return null;
+        }
+    }
 }

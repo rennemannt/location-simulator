@@ -23,10 +23,15 @@
  */
 package org.teamninjaneer.simulator.locationsimulator.views;
 
+import static javafx.animation.Animation.INDEFINITE;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.util.Duration;
 
 /**
  * The Earth map view controller.
@@ -37,6 +42,8 @@ public class EarthViewController {
 
     private final StackPane earthStackPane;
     private final Circle placemark = new Circle();
+    private final Timeline timeline = new Timeline();
+    private final static Paint CIRCLE_COLOR = Paint.valueOf(Color.RED.toString());
 
     /**
      * Construct controller.
@@ -45,9 +52,21 @@ public class EarthViewController {
      */
     public EarthViewController(StackPane earthStackPane) {
         placemark.setRadius(10);
-        placemark.setFill(Paint.valueOf(Color.LIGHTBLUE.toString()));
+        placemark.setFill(CIRCLE_COLOR);
         earthStackPane.getChildren().add(placemark);
         this.earthStackPane = earthStackPane;
+
+        // set a blinking animation
+        timeline.getKeyFrames().addAll(
+                new KeyFrame(Duration.ZERO, // set start position at 0
+                        new KeyValue(placemark.fillProperty(), Color.TRANSPARENT)
+                ),
+                new KeyFrame(new Duration(1000), // set end position at 4s
+                        new KeyValue(placemark.fillProperty(), CIRCLE_COLOR)
+                )
+        );
+        timeline.setAutoReverse(true);
+        timeline.cycleCountProperty().setValue(INDEFINITE);
     }
 
     /**
@@ -66,5 +85,8 @@ public class EarthViewController {
 
         placemark.setTranslateY(latGridCoord);
         placemark.setTranslateX(lonGridCoord);
+
+        // play animation
+        timeline.play();
     }
 }

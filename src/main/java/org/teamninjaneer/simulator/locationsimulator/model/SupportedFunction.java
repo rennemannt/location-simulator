@@ -21,16 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.teamninjaneer.simulator.locationsimulator;
+package org.teamninjaneer.simulator.locationsimulator.model;
 
 /**
- * The reserved variable place holder values.
+ * The supported function names enumeration.
  *
- * @author Travis.Rennemann
+ * @author Travis Rennemann <rennemannt@gmail.com>
  */
-public enum Placeholder {
-    // latitude
-    LAT,
-    // longitude
-    LON
+public enum SupportedFunction {
+    // date time
+    DT,
+    // random with optional seed and upper bound params
+    RAND
 }

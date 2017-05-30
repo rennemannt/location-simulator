@@ -36,7 +36,7 @@
         </HBox>
     </top>
     <left>
-        <VBox minWidth="300.0" spacing="8.0" BorderPane.alignment="CENTER">
+        <VBox minWidth="280.0" spacing="8.0" BorderPane.alignment="CENTER">
             <children>
                 <Label layoutX="10.0" layoutY="150.0" text="Event Date Time" />
             <HBox spacing="8.0">
@@ -123,20 +123,39 @@
                <tooltip>
                   <Tooltip text="string representing the format of each data row in the output text file" />
                </tooltip></TextField>
-                <Label text="Export Directory" />
-                <HBox spacing="5.0">
-                    <children>
-                        <TextField fx:id="exportDirectoryTextField" minWidth="300.0" HBox.hgrow="ALWAYS">
-                     <tooltip>
-                        <Tooltip text="directory where files should be output" />
-                     </tooltip></TextField>
-                        <Button fx:id="browseButton" cache="true" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" scaleShape="false" styleClass="browse-ico" text="browse">
-                            <tooltip>
-                                <Tooltip text="browse for directory" />
-                            </tooltip>
-                        </Button>
-                    </children>
-                </HBox>
+            <HBox spacing="8.0">
+               <children>
+                  <VBox>
+                     <children>
+                            <Label text="Export Directory" />
+                            <HBox spacing="5.0">
+                                <children>
+                                    <TextField fx:id="exportDirectoryTextField" minWidth="320.0" HBox.hgrow="ALWAYS">
+                                 <tooltip>
+                                    <Tooltip text="directory where files should be output" />
+                                 </tooltip>
+                              </TextField>
+                                    <Button fx:id="browseButton" cache="true" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" scaleShape="false" styleClass="browse-ico" text="browse">
+                                        <tooltip>
+                                            <Tooltip text="browse for directory" />
+                                        </tooltip>
+                                    </Button>
+                                </children>
+                            </HBox>
+                     </children>
+                  </VBox>
+                  <VBox>
+                     <children>
+                        <Label text="File Extension" />
+                        <TextField fx:id="fileExtensionTextField" text=".loc">
+                           <tooltip>
+                              <Tooltip text="file extension for exported files" />
+                           </tooltip>
+                        </TextField>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
             </children>
         </VBox>
     </center>

@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.teamninjaneer.simulator.locationsimulator.SupportedFunction;
+import org.teamninjaneer.simulator.locationsimulator.model.SupportedFunction;
 import org.teamninjaneer.simulator.locationsimulator.model.LocationDataRow;
 
 /**
