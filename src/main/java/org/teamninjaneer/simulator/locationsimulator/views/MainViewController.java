@@ -271,43 +271,7 @@ public class MainViewController implements Initializable {
             @Override
             public void handle(ActionEvent event) {
                 updateLocDataRow();
-
-                if (exporter == null) {
-                    Duration newLocRate = Duration.of(locRateValueComboBox.getValue(),
-                            TemporalUnitConverter.convert(locRateUomChoiceBox.getValue()));
-                    Duration newFileRate = Duration.of(newFileRateValueComboBox.getValue(),
-                            TemporalUnitConverter.convert(newFileRateUomChoiceBox.getValue()));
-                    exporter = new FileExporter(locDataRow,
-                            fileExtensionTextField.getText(),
-                            exportDirectoryTextField.getText(),
-                            newLocRate,
-                            newFileRate);
-                    exporter.getStatusProperty().addListener(new ChangeListener<String>() {
-                        @Override
-                        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                            status.setValue(newValue);
-                        }
-
-                    });
-                    exporter.getLatProperty().addListener(new ChangeListener<Number>() {
-                        @Override
-                        public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                            latProperty.set((double) newValue);
-                        }
-                    });
-                    exporter.getLonProperty().addListener(new ChangeListener<Number>() {
-                        @Override
-                        public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                            lonProperty.set((double) newValue);
-                        }
-                    });
-                    exporter.getDtProperty().addListener(new ChangeListener<Instant>() {
-                        @Override
-                        public void changed(ObservableValue<? extends Instant> observable, Instant oldValue, Instant newValue) {
-                            dtProperty.set(newValue);
-                        }
-                    });
-                }
+                initExporter();
                 try {
                     exporter.export();
                 } catch (IOException e) {
@@ -321,11 +285,58 @@ public class MainViewController implements Initializable {
             @Override
             public void handle(ActionEvent event) {
                 updateLocDataRow();
+                initExporter();
+                if ("run".equals(runButton.getText().toLowerCase())) {
+                    exporter.start();
+                    runButton.setText("stop");
+                } else {
+                    exporter.stop();
+                    runButton.setText("run");
+                }
             }
         });
 
         statusLabel.textProperty().bind(status);
         registerValidators();
+    }
+
+    private void initExporter() {
+        if (exporter == null) {
+            Duration newLocRate = Duration.of(locRateValueComboBox.getValue(),
+                    TemporalUnitConverter.convert(locRateUomChoiceBox.getValue()));
+            Duration newFileRate = Duration.of(newFileRateValueComboBox.getValue(),
+                    TemporalUnitConverter.convert(newFileRateUomChoiceBox.getValue()));
+            exporter = new FileExporter(locDataRow,
+                    fileExtensionTextField.getText(),
+                    exportDirectoryTextField.getText(),
+                    newLocRate,
+                    newFileRate);
+            exporter.getStatusProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    status.setValue(newValue);
+                }
+
+            });
+            exporter.getLatProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                    latProperty.set((double) newValue);
+                }
+            });
+            exporter.getLonProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                    lonProperty.set((double) newValue);
+                }
+            });
+            exporter.getDtProperty().addListener(new ChangeListener<Instant>() {
+                @Override
+                public void changed(ObservableValue<? extends Instant> observable, Instant oldValue, Instant newValue) {
+                    dtProperty.set(newValue);
+                }
+            });
+        }
     }
 
     /**

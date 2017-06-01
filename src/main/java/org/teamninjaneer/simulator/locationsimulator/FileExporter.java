@@ -45,7 +45,7 @@ import org.teamninjaneer.simulator.locationsimulator.model.LocationDataRow;
  * @author Travis Rennemann <rennemannt@gmail.com>
  */
 public class FileExporter {
-
+    
     private static final Logger LOGGER = Logger.getGlobal();
     private final LocationDataRow locDataRow;
     private final String exportPath;
@@ -89,6 +89,7 @@ public class FileExporter {
                 try {
                     export();
                 } catch (IOException e) {
+                    statusProperty.set("Failed to export file!");
                     LOGGER.log(Level.SEVERE, "Failed to export file!", e);
                 }
             }
@@ -182,21 +183,21 @@ public class FileExporter {
         }
         return newLon;
     }
-
+    
     public ObjectProperty<Instant> getDtProperty() {
         return dtProperty;
     }
-
+    
     public SimpleDoubleProperty getLatProperty() {
         return latProperty;
     }
-
+    
     public SimpleDoubleProperty getLonProperty() {
         return lonProperty;
     }
-
+    
     public SimpleStringProperty getStatusProperty() {
         return statusProperty;
     }
-
+    
 }
