@@ -25,6 +25,7 @@ package org.teamninjaneer.simulator.locationsimulator.converter;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.teamninjaneer.simulator.locationsimulator.model.SupportedFunction;
@@ -37,6 +38,7 @@ import org.teamninjaneer.simulator.locationsimulator.model.LocationDataRow;
  */
 public class PatternConverter {
 
+    private static final Logger LOGGER = Logger.getGlobal();
     private static final String INSUFFICIENT_PARAMS = "LocationDataRow and its pattern property cannot be null!";
     private static final Pattern FUNC_NAME_PATTERN = Pattern.compile("(\\w+)");
     // random function regex pattern
@@ -68,6 +70,7 @@ public class PatternConverter {
         String converted = dataRow.getPattern();
         converted = converted.replace("$lat", String.valueOf(dataRow.getLat()));
         converted = converted.replace("$lon", String.valueOf(dataRow.getLon()));
+        converted = converted.replace("\\n", "\n").replace("\\r", "\r");
         converted = replaceFunctions(converted, dataRow);
 
         return converted;
@@ -81,36 +84,33 @@ public class PatternConverter {
             Pattern inner = entry.getValue();
 
             Matcher matcher = outter.matcher(dataRowPattern);
-            boolean foundMatches = matcher.find();
-            if (foundMatches && matcher.groupCount() > 0) {
-                for (int i = 1; i <= matcher.groupCount(); i++) {
-                    String func = matcher.group(i);
-                    Matcher paramMatcher = inner.matcher(func);
-                    boolean foundParams = paramMatcher.find();
-                    String params = "";
-                    if (foundParams) {
-                        params = paramMatcher.group(1);
+            while (matcher.find()) {
+                String func = matcher.group(1);
+                Matcher paramMatcher = inner.matcher(func);
+                String params = "";
+                while (paramMatcher.find()) {
+                    params = paramMatcher.group(1);
+                }
+                Matcher funcNameMatcher = FUNC_NAME_PATTERN.matcher(func);
+                SupportedFunction sFunc;
+                String funcResult;
+                while (funcNameMatcher.find()) {
+                    try {
+                        sFunc = SupportedFunction.valueOf(funcNameMatcher.group(1).toUpperCase());
+                    } catch (IllegalArgumentException e) {
+                        continue;
                     }
-                    Matcher funcNameMatcher = FUNC_NAME_PATTERN.matcher(func);
-                    boolean foundFuncName = funcNameMatcher.find();
-                    SupportedFunction sFunc;
-                    String funcResult;
-                    if (foundFuncName && funcNameMatcher.groupCount() > 0) {
-                        for (int x = 1; x < funcNameMatcher.groupCount(); x++) {
-                            sFunc = SupportedFunction.valueOf(funcNameMatcher.group(x).toUpperCase());
-                            switch (sFunc) {
-                                case DT:
-                                    funcResult = FunctionConverter.convertDt(params, dataRow.getDt());
-                                    break;
-                                case RAND:
-                                    funcResult = FunctionConverter.convertRand(params);
-                                    break;
-                                default:
-                                    funcResult = "ERROR!";
-                            }
-                            result = result.replace(func, funcResult);
-                        }
+                    switch (sFunc) {
+                        case DT:
+                            funcResult = FunctionConverter.convertDt(params, dataRow.getDt());
+                            break;
+                        case RAND:
+                            funcResult = FunctionConverter.convertRand(params);
+                            break;
+                        default:
+                            funcResult = "NOT_SUPPORTED!";
                     }
+                    result = result.replace(func, funcResult);
                 }
             }
         }

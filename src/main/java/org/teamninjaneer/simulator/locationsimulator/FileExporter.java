@@ -111,6 +111,7 @@ public class FileExporter {
         final String dataRows = nextLocDataRows();
         String fileName = Instant.now().toString().replace(":", "") + fileExt;
         Files.write(Paths.get(exportPath + "/" + fileName), dataRows.getBytes());
+        statusProperty.set("Exported file at " + Instant.now().toString());
     }
 
     /**
@@ -120,17 +121,66 @@ public class FileExporter {
      */
     private String nextLocDataRows() {
         StringBuilder dataRows = new StringBuilder();
-        long rowCount = Math.floorMod(newFileRate.toMillis(), newLocRate.toMillis());
+        long rowCount = Math.floorDiv(newFileRate.toMillis(), newLocRate.toMillis());
         for (int i = 0; i < rowCount; i++) {
             // increment values
-            locDataRow.setDt(locDataRow.getDt().plusMillis(newLocRate.toMillis()));
-            locDataRow.setLat(locDataRow.getLat() + locDataRow.getLatDelta());
-            locDataRow.setLon(locDataRow.getLon() + locDataRow.getLonDelta());
+            latProperty.set(nextLat(locDataRow.getLat(), locDataRow.getLatDelta()));
+            lonProperty.set(nextLon(locDataRow.getLon(), locDataRow.getLonDelta()));
+            dtProperty.set(locDataRow.getDt().plusMillis(newLocRate.toMillis()));
+            locDataRow.setDt(dtProperty.get());
+            locDataRow.setLat(latProperty.get());
+            locDataRow.setLon(lonProperty.get());
             // create a single data row
             String dataRow = PatternConverter.convert(locDataRow);
             dataRows.append(dataRow);
         }
         return dataRows.toString();
+    }
+
+    /**
+     * Increment or decrement the latitude value by the delta value; a round
+     * earth is assumed.
+     *
+     * @param lat The latitude to change
+     * @param delta The amount of degrees to change the latitude
+     * @return
+     */
+    private double nextLat(double lat, double delta) {
+        double newLat = lat + delta;
+        if (newLat < -90) {
+            // the number of degrees to wrap around a pole
+            double wrapAround = Math.abs(newLat) - 90;
+            newLat += wrapAround;
+            locDataRow.setLatDelta(Math.abs(delta));
+        } else if (newLat > 90) {
+            double wrapAround = newLat - 90;
+            newLat -= wrapAround;
+            locDataRow.setLatDelta(Math.abs(delta) * -1);
+        }
+        return newLat;
+    }
+
+    /**
+     * Increment or decrement the longitude value by the delta value; a round
+     * earth is assumed.
+     *
+     * @param lon The longitude to change
+     * @param delta The amount of degrees to change the longitude
+     * @return
+     */
+    private double nextLon(double lon, double delta) {
+        double newLon = lon + delta;
+        if (newLon < -180) {
+            // the number of degrees to wrap around a pole
+            double wrapAround = Math.abs(newLon) - 180;
+            newLon += wrapAround;
+            locDataRow.setLonDelta(Math.abs(delta));
+        } else if (newLon > 180) {
+            double wrapAround = newLon - 180;
+            newLon -= wrapAround;
+            locDataRow.setLonDelta(Math.abs(delta) * -1);
+        }
+        return newLon;
     }
 
     public ObjectProperty<Instant> getDtProperty() {

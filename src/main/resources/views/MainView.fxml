@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="800.0" styleClass="scene-bg" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.teamninjaneer.simulator.locationsimulator.views.MainViewController">
+<BorderPane prefHeight="450.0" prefWidth="800.0" styleClass="scene-bg" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.teamninjaneer.simulator.locationsimulator.views.MainViewController">
     <top>
         <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="10.0" styleClass="menu-bg" BorderPane.alignment="CENTER_LEFT">
             <children>
@@ -119,7 +119,7 @@
             <children>
             <StackPane fx:id="earthStackPane" prefHeight="200.0" prefWidth="400.0" styleClass="earth-2d" />
                 <Label text="Data Row Format" />
-                <TextField fx:id="dataRowFormatTextField" text="dt(yyyy/MM/dd,HH:mm:s.SSSz), $lat, $lon, rand(5,40), rand(4,16)">
+                <TextField fx:id="dataRowFormatTextField" text="dt(yyyy/MM/dd,HH:mm:s.SSS), $lat, $lon, rand(5,40), rand(4,16)\n">
                <tooltip>
                   <Tooltip text="string representing the format of each data row in the output text file" />
                </tooltip></TextField>

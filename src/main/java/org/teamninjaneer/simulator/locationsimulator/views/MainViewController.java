@@ -57,11 +57,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
-import javafx.util.converter.NumberStringConverter;
+import javafx.util.StringConverter;
+import javafx.util.converter.FormatStringConverter;
 import org.controlsfx.validation.Severity;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
 import org.teamninjaneer.simulator.locationsimulator.FileExporter;
+import org.teamninjaneer.simulator.locationsimulator.converter.DoubleStringConverter;
+import org.teamninjaneer.simulator.locationsimulator.converter.FunctionConverter;
 import org.teamninjaneer.simulator.locationsimulator.converter.TemporalUnitConverter;
 import org.teamninjaneer.simulator.locationsimulator.model.LocationDataRow;
 
@@ -153,18 +156,50 @@ public class MainViewController implements Initializable {
         locRateUomChoiceBox.setValue(TimeUnit.MILLISECONDS);
         locRateUomChoiceBox.getSelectionModel().select(TimeUnit.MILLISECONDS);
 
-        locRateValueComboBox.setItems(FXCollections.observableArrayList(1, 2, 5, 10, 20, 30, 40, 50, 100, 200));
+        locRateValueComboBox.setItems(FXCollections.<Integer>observableArrayList(1, 2, 5, 10, 20, 30, 40, 50, 100, 200));
         locRateValueComboBox.getSelectionModel().selectFirst();
+        locRateValueComboBox.setConverter(new StringConverter<Integer>() {
+            @Override
+            public String toString(Integer object) {
+                return String.valueOf(object);
+            }
+
+            @Override
+            public Integer fromString(String string) {
+                try {
+                    return Integer.parseInt(string);
+                } catch (NumberFormatException e) {
+                    // can't parse the string because it's not a number
+                    return null;
+                }
+            }
+        });
 
         newFileRateUomChoiceBox.getItems().setAll(TimeUnit.values());
         newFileRateUomChoiceBox.setValue(TimeUnit.MINUTES);
         newFileRateUomChoiceBox.getSelectionModel().select(TimeUnit.MINUTES);
 
-        newFileRateValueComboBox.setItems(FXCollections.observableArrayList(1, 2, 3, 5, 10, 20, 30, 40, 50, 100));
+        newFileRateValueComboBox.setItems(FXCollections.<Integer>observableArrayList(1, 2, 3, 5, 10, 20, 30, 40, 50, 100));
         newFileRateValueComboBox.getSelectionModel().select(1);
+        newFileRateValueComboBox.setConverter(new StringConverter<Integer>() {
+            @Override
+            public String toString(Integer object) {
+                return String.valueOf(object);
+            }
 
-        latTextField.textProperty().bindBidirectional(latProperty, new NumberStringConverter());
-        lonTextField.textProperty().bindBidirectional(lonProperty, new NumberStringConverter());
+            @Override
+            public Integer fromString(String string) {
+                try {
+                    return Integer.parseInt(string);
+                } catch (NumberFormatException e) {
+                    // can't parse the string because it's not a number
+                    return null;
+                }
+            }
+        });
+
+        latTextField.textProperty().bindBidirectional(latProperty, new DoubleStringConverter());
+        lonTextField.textProperty().bindBidirectional(lonProperty, new DoubleStringConverter());
 
         latProperty.addListener(new ChangeListener<Number>() {
             @Override
@@ -180,11 +215,43 @@ public class MainViewController implements Initializable {
             }
         });
 
-        latDeltaComboBox.setItems(FXCollections.observableArrayList(0.001, 0.01, 0.1, 1.0, 5.0, 10.0, 20.0, 30.0, 40.0, 60.0));
+        latDeltaComboBox.setItems(FXCollections.<Double>observableArrayList(0.001, 0.01, 0.1, 1.0, 5.0, 10.0, 20.0, 30.0, 40.0, 60.0));
         latDeltaComboBox.getSelectionModel().select(1.0);
+        latDeltaComboBox.setConverter(new StringConverter<Double>() {
+            @Override
+            public String toString(Double object) {
+                return String.valueOf(object);
+            }
 
-        lonDeltaComboBox.setItems(FXCollections.observableArrayList(0.001, 0.01, 0.1, 1.0, 5.0, 10.0, 20.0, 30.0, 40.0, 60.0));
+            @Override
+            public Double fromString(String string) {
+                try {
+                    return Double.parseDouble(string);
+                } catch (NumberFormatException e) {
+                    // can't parse the string because it's not a number
+                    return null;
+                }
+            }
+        });
+
+        lonDeltaComboBox.setItems(FXCollections.<Double>observableArrayList(0.001, 0.01, 0.1, 1.0, 5.0, 10.0, 20.0, 30.0, 40.0, 60.0));
         lonDeltaComboBox.getSelectionModel().select(1.0);
+        lonDeltaComboBox.setConverter(new StringConverter<Double>() {
+            @Override
+            public String toString(Double object) {
+                return String.valueOf(object);
+            }
+
+            @Override
+            public Double fromString(String string) {
+                try {
+                    return Double.parseDouble(string);
+                } catch (NumberFormatException e) {
+                    // can't parse the string because it's not a number
+                    return null;
+                }
+            }
+        });
 
         browseButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -204,6 +271,7 @@ public class MainViewController implements Initializable {
             @Override
             public void handle(ActionEvent event) {
                 updateLocDataRow();
+
                 if (exporter == null) {
                     Duration newLocRate = Duration.of(locRateValueComboBox.getValue(),
                             TemporalUnitConverter.convert(locRateUomChoiceBox.getValue()));
@@ -214,7 +282,31 @@ public class MainViewController implements Initializable {
                             exportDirectoryTextField.getText(),
                             newLocRate,
                             newFileRate);
-                    status.bindBidirectional(exporter.getStatusProperty());
+                    exporter.getStatusProperty().addListener(new ChangeListener<String>() {
+                        @Override
+                        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                            status.setValue(newValue);
+                        }
+
+                    });
+                    exporter.getLatProperty().addListener(new ChangeListener<Number>() {
+                        @Override
+                        public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                            latProperty.set((double) newValue);
+                        }
+                    });
+                    exporter.getLonProperty().addListener(new ChangeListener<Number>() {
+                        @Override
+                        public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                            lonProperty.set((double) newValue);
+                        }
+                    });
+                    exporter.getDtProperty().addListener(new ChangeListener<Instant>() {
+                        @Override
+                        public void changed(ObservableValue<? extends Instant> observable, Instant oldValue, Instant newValue) {
+                            dtProperty.set(newValue);
+                        }
+                    });
                 }
                 try {
                     exporter.export();
@@ -240,18 +332,76 @@ public class MainViewController implements Initializable {
      * Add validators to all input controls.
      */
     private void registerValidators() {
-        final Validator intValidator = Validator.createPredicateValidator(new Predicate<Integer>() {
+        final Validator intValidator = Validator.createPredicateValidator(new Predicate<Object>() {
             @Override
-            public boolean test(Integer t) {
-                return t > 0;
-            }
-        }, "value must be an integer greater than 0");
+            public boolean test(Object value) {
+                if (value == null) {
+                    return false;
+                }
+                String strVal;
+                int intVal;
+                if (value instanceof String) {
+                    strVal = (String) value;
+                    strVal = strVal.trim();
+                    if (strVal.length() < 1) {
+                        return false;
+                    }
 
-        final Validator doubleValidator = Validator.createPredicateValidator(new Predicate<Double>() {
-            @Override
-            public boolean test(Double t) {
-                return t >= 0.0;
+                    try {
+                        intVal = Integer.parseInt(strVal);
+                    } catch (NumberFormatException e) {
+                        // can't parse the string because it's not a number
+                        return false;
+                    }
+                } else if (value instanceof Integer) {
+                    intVal = (int) value;
+                } else {
+                    return false;
+                }
+
+                if (intVal >= 0) {
+                    return true;
+                } else {
+                    return false;
+                }
             }
+
+        }, "value must be an integer greater than 0");
+        final Validator doubleValidator = Validator.createPredicateValidator(new Predicate<Object>() {
+            @Override
+            public boolean test(Object value) {
+                // If the specified value is null or zero-length, return null
+                if (value == null) {
+                    return false;
+                }
+                String strVal;
+                double doubleVal;
+                if (value instanceof String) {
+                    strVal = (String) value;
+                    strVal = strVal.trim();
+                    if (strVal.length() < 1) {
+                        return false;
+                    }
+
+                    try {
+                        doubleVal = Double.parseDouble(strVal);
+                    } catch (NumberFormatException e) {
+                        // can't parse the string because it's not a number
+                        return false;
+                    }
+                } else if (value instanceof Double) {
+                    doubleVal = (double) value;
+                } else {
+                    return false;
+                }
+
+                if (doubleVal >= 0) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
         }, "value must be a numeric value greater than or equal to 0");
 
         validationSupport.registerValidator(eventDatePicker, true, Validator.createEmptyValidator("a valid date must be provided"));
@@ -270,7 +420,7 @@ public class MainViewController implements Initializable {
                 Severity.ERROR));
         validationSupport.registerValidator(dataRowFormatTextField, true, Validator.createEmptyValidator("data row format must be provided"));
         validationSupport.registerValidator(exportDirectoryTextField, true, Validator.createEmptyValidator("an export directory must be given"));
-        validationSupport.initInitialDecoration();
+
     }
 
     /**
@@ -278,7 +428,7 @@ public class MainViewController implements Initializable {
      */
     private void updateLocDataRow() {
         if (validationSupport.getValidationResult().getErrors().toArray().length > 0) {
-            status.set(validationSupport.getValidationResult().getMessages().toString());
+            status.setValue(validationSupport.getValidationResult().getMessages().toString());
             return;
         }
         // update the date time
@@ -290,7 +440,8 @@ public class MainViewController implements Initializable {
         locDataRow.setLon(lonProperty.get());
 
         // update the lat and lon deltas
-        locDataRow.setLatDelta(latDeltaComboBox.getValue());
+        double latDelta = latDeltaComboBox.getValue();
+        locDataRow.setLatDelta(latDelta);
         locDataRow.setLonDelta(lonDeltaComboBox.getValue());
 
         locDataRow.setPattern(dataRowFormatTextField.getText());
