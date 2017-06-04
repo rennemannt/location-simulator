@@ -24,6 +24,7 @@
 package org.teamninjaneer.simulator.locationsimulator.converter;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -96,7 +97,7 @@ public class PatternConverter {
                 String funcResult;
                 while (funcNameMatcher.find()) {
                     try {
-                        sFunc = SupportedFunction.valueOf(funcNameMatcher.group(1).toUpperCase());
+                        sFunc = SupportedFunction.valueOf(funcNameMatcher.group(1).toUpperCase(Locale.US));
                     } catch (IllegalArgumentException e) {
                         continue;
                     }

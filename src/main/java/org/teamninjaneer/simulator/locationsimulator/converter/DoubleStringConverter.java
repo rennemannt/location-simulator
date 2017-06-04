@@ -26,48 +26,24 @@ package org.teamninjaneer.simulator.locationsimulator.converter;
 import javafx.util.StringConverter;
 
 /**
- * Handle the conversion of string to double values.
+ * Handle conversions between String and Double.
  *
  * @author Travis.Rennemann
  */
-public class DoubleStringConverter extends StringConverter<Number> {
+public class DoubleStringConverter extends StringConverter<Double> {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public Double fromString(String value) {
+    public String toString(Double object) {
+        return String.valueOf(object);
+    }
 
-        // If the specified value is null or zero-length, return null
-        if (value == null) {
-            return null;
-        }
-
-        value = value.trim();
-
-        if (value.length() < 1) {
-            return null;
-        }
-
-        double doubleVal;
+    @Override
+    public Double fromString(String string) {
         try {
-            doubleVal = Double.parseDouble(value);
+            return Double.parseDouble(string);
         } catch (NumberFormatException e) {
             // can't parse the string because it's not a number
             return null;
         }
-        return doubleVal;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString(Number value) {
-        // If the specified value is null, return a zero-length String
-        if (value == null) {
-            return "";
-        }
-        return String.valueOf(value);
     }
 }

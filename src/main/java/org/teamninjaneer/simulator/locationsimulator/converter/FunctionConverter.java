@@ -71,11 +71,13 @@ public class FunctionConverter {
      */
     public static String convertRand(Integer seed, Integer upperBound) {
         int intVal;
+        Random rand;
         if (seed != null && upperBound != null) {
-            Random rand = new Random(seed);
+            rand = new Random(seed);
             intVal = rand.nextInt(upperBound);
         } else {
-            intVal = (int) (Math.random() * 100);
+            rand = new Random();
+            intVal = rand.nextInt();
         }
 
         return String.valueOf(intVal);

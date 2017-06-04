@@ -32,6 +32,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
@@ -58,13 +59,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
 import javafx.util.StringConverter;
-import javafx.util.converter.FormatStringConverter;
 import org.controlsfx.validation.Severity;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
 import org.teamninjaneer.simulator.locationsimulator.FileExporter;
 import org.teamninjaneer.simulator.locationsimulator.converter.DoubleStringConverter;
-import org.teamninjaneer.simulator.locationsimulator.converter.FunctionConverter;
+import org.teamninjaneer.simulator.locationsimulator.converter.PositiveDoubleStringConverter;
+import org.teamninjaneer.simulator.locationsimulator.converter.IntegerStringConverter;
 import org.teamninjaneer.simulator.locationsimulator.converter.TemporalUnitConverter;
 import org.teamninjaneer.simulator.locationsimulator.model.LocationDataRow;
 
@@ -78,6 +79,8 @@ public class MainViewController implements Initializable {
     private final ObjectProperty<Instant> dtProperty = new SimpleObjectProperty<>();
     private final SimpleDoubleProperty latProperty = new SimpleDoubleProperty(0.0);
     private final SimpleDoubleProperty lonProperty = new SimpleDoubleProperty(0.0);
+    private final IntegerStringConverter intStrConv = new IntegerStringConverter();
+    private final DoubleStringConverter doubleStrConv = new DoubleStringConverter();
     private FileExporter exporter = null;
     private EarthViewController earth;
 
@@ -142,14 +145,11 @@ public class MainViewController implements Initializable {
         eventDatePicker.setValue(LocalDate.now());
         eventDatePicker.setDepthTest(DepthTest.ENABLE);
 
-        dtProperty.addListener(new ChangeListener<Instant>() {
-            @Override
-            public void changed(ObservableValue<? extends Instant> observable, Instant oldValue, Instant newValue) {
-                locDataRow.setDt(newValue);
-                // update the form fields for date and time
-                eventDatePicker.setValue(LocalDateTime.ofInstant(newValue, ZoneOffset.UTC).toLocalDate());
-                eventTimeTextField.setText(LocalDateTime.ofInstant(newValue, ZoneOffset.UTC).toLocalTime().format(ISO_TIME));
-            }
+        dtProperty.addListener((ObservableValue<? extends Instant> observable, Instant oldValue, Instant newValue) -> {
+            locDataRow.setDt(newValue);
+            // update the form fields for date and time
+            eventDatePicker.setValue(LocalDateTime.ofInstant(newValue, ZoneOffset.UTC).toLocalDate());
+            eventTimeTextField.setText(LocalDateTime.ofInstant(newValue, ZoneOffset.UTC).toLocalTime().format(ISO_TIME));
         });
 
         locRateUomChoiceBox.getItems().setAll(TimeUnit.values());
@@ -158,22 +158,7 @@ public class MainViewController implements Initializable {
 
         locRateValueComboBox.setItems(FXCollections.<Integer>observableArrayList(1, 2, 5, 10, 20, 30, 40, 50, 100, 200));
         locRateValueComboBox.getSelectionModel().selectFirst();
-        locRateValueComboBox.setConverter(new StringConverter<Integer>() {
-            @Override
-            public String toString(Integer object) {
-                return String.valueOf(object);
-            }
-
-            @Override
-            public Integer fromString(String string) {
-                try {
-                    return Integer.parseInt(string);
-                } catch (NumberFormatException e) {
-                    // can't parse the string because it's not a number
-                    return null;
-                }
-            }
-        });
+        locRateValueComboBox.setConverter(intStrConv);
 
         newFileRateUomChoiceBox.getItems().setAll(TimeUnit.values());
         newFileRateUomChoiceBox.setValue(TimeUnit.MINUTES);
@@ -181,77 +166,22 @@ public class MainViewController implements Initializable {
 
         newFileRateValueComboBox.setItems(FXCollections.<Integer>observableArrayList(1, 2, 3, 5, 10, 20, 30, 40, 50, 100));
         newFileRateValueComboBox.getSelectionModel().select(1);
-        newFileRateValueComboBox.setConverter(new StringConverter<Integer>() {
-            @Override
-            public String toString(Integer object) {
-                return String.valueOf(object);
-            }
+        newFileRateValueComboBox.setConverter(intStrConv);
 
-            @Override
-            public Integer fromString(String string) {
-                try {
-                    return Integer.parseInt(string);
-                } catch (NumberFormatException e) {
-                    // can't parse the string because it's not a number
-                    return null;
-                }
-            }
-        });
+        latTextField.textProperty().bindBidirectional(latProperty, new PositiveDoubleStringConverter());
+        lonTextField.textProperty().bindBidirectional(lonProperty, new PositiveDoubleStringConverter());
 
-        latTextField.textProperty().bindBidirectional(latProperty, new DoubleStringConverter());
-        lonTextField.textProperty().bindBidirectional(lonProperty, new DoubleStringConverter());
+        latProperty.addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> earth.movePlacemark(newValue.doubleValue(), lonProperty.get()));
 
-        latProperty.addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                earth.movePlacemark((double) newValue, lonProperty.get());
-            }
-        });
-
-        lonProperty.addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                earth.movePlacemark(latProperty.get(), (double) newValue);
-            }
-        });
+        lonProperty.addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> earth.movePlacemark(latProperty.get(), newValue.doubleValue()));
 
         latDeltaComboBox.setItems(FXCollections.<Double>observableArrayList(0.001, 0.01, 0.1, 1.0, 5.0, 10.0, 20.0, 30.0, 40.0, 60.0));
         latDeltaComboBox.getSelectionModel().select(1.0);
-        latDeltaComboBox.setConverter(new StringConverter<Double>() {
-            @Override
-            public String toString(Double object) {
-                return String.valueOf(object);
-            }
-
-            @Override
-            public Double fromString(String string) {
-                try {
-                    return Double.parseDouble(string);
-                } catch (NumberFormatException e) {
-                    // can't parse the string because it's not a number
-                    return null;
-                }
-            }
-        });
+        latDeltaComboBox.setConverter(doubleStrConv);
 
         lonDeltaComboBox.setItems(FXCollections.<Double>observableArrayList(0.001, 0.01, 0.1, 1.0, 5.0, 10.0, 20.0, 30.0, 40.0, 60.0));
         lonDeltaComboBox.getSelectionModel().select(1.0);
-        lonDeltaComboBox.setConverter(new StringConverter<Double>() {
-            @Override
-            public String toString(Double object) {
-                return String.valueOf(object);
-            }
-
-            @Override
-            public Double fromString(String string) {
-                try {
-                    return Double.parseDouble(string);
-                } catch (NumberFormatException e) {
-                    // can't parse the string because it's not a number
-                    return null;
-                }
-            }
-        });
+        lonDeltaComboBox.setConverter(doubleStrConv);
 
         browseButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -286,7 +216,7 @@ public class MainViewController implements Initializable {
             public void handle(ActionEvent event) {
                 updateLocDataRow();
                 initExporter();
-                if ("run".equals(runButton.getText().toLowerCase())) {
+                if ("run".equals(runButton.getText().toLowerCase(Locale.US))) {
                     exporter.start();
                     runButton.setText("stop");
                 } else {
@@ -300,43 +230,47 @@ public class MainViewController implements Initializable {
         registerValidators();
     }
 
+    /**
+     * Initialize File Exporter.
+     */
     private void initExporter() {
-        if (exporter == null) {
-            Duration newLocRate = Duration.of(locRateValueComboBox.getValue(),
-                    TemporalUnitConverter.convert(locRateUomChoiceBox.getValue()));
-            Duration newFileRate = Duration.of(newFileRateValueComboBox.getValue(),
-                    TemporalUnitConverter.convert(newFileRateUomChoiceBox.getValue()));
-            exporter = new FileExporter(locDataRow,
-                    fileExtensionTextField.getText(),
-                    exportDirectoryTextField.getText(),
-                    newLocRate,
-                    newFileRate);
-            exporter.getStatusProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    status.setValue(newValue);
-                }
-
-            });
-            exporter.getLatProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    latProperty.set((double) newValue);
-                }
-            });
-            exporter.getLonProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    lonProperty.set((double) newValue);
-                }
-            });
-            exporter.getDtProperty().addListener(new ChangeListener<Instant>() {
-                @Override
-                public void changed(ObservableValue<? extends Instant> observable, Instant oldValue, Instant newValue) {
-                    dtProperty.set(newValue);
-                }
-            });
+        if (exporter != null) {
+            return;
         }
+        Duration newLocRate = Duration.of(locRateValueComboBox.getValue(),
+                TemporalUnitConverter.convert(locRateUomChoiceBox.getValue()));
+        Duration newFileRate = Duration.of(newFileRateValueComboBox.getValue(),
+                TemporalUnitConverter.convert(newFileRateUomChoiceBox.getValue()));
+        exporter = new FileExporter(locDataRow,
+                fileExtensionTextField.getText(),
+                exportDirectoryTextField.getText(),
+                newLocRate,
+                newFileRate);
+        exporter.getStatusProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                status.setValue(newValue);
+            }
+
+        });
+        exporter.getLatProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                latProperty.set(newValue.doubleValue());
+            }
+        });
+        exporter.getLonProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                lonProperty.set(newValue.doubleValue());
+            }
+        });
+        exporter.getDtProperty().addListener(new ChangeListener<Instant>() {
+            @Override
+            public void changed(ObservableValue<? extends Instant> observable, Instant oldValue, Instant newValue) {
+                dtProperty.set(newValue);
+            }
+        });
     }
 
     /**
@@ -370,11 +304,7 @@ public class MainViewController implements Initializable {
                     return false;
                 }
 
-                if (intVal >= 0) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return intVal >= 0;
             }
 
         }, "value must be an integer greater than 0");
@@ -406,11 +336,7 @@ public class MainViewController implements Initializable {
                     return false;
                 }
 
-                if (doubleVal >= 0) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return doubleVal >= 0;
             }
 
         }, "value must be a numeric value greater than or equal to 0");

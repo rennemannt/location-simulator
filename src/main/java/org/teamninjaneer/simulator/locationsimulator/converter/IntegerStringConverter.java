@@ -21,44 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.teamninjaneer.simulator.locationsimulator;
+package org.teamninjaneer.simulator.locationsimulator.converter;
 
-import javafx.application.Application;
-import static javafx.application.Application.launch;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 /**
- * Main for the Location Simulator.
+ * Handle the conversion to and from integer and string.
  *
- * @author Travis Rennemann
+ * @author Travis.Rennemann
  */
-public final class MainApp extends Application {
+public class IntegerStringConverter extends StringConverter<Integer> {
 
     @Override
-    public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/views/MainView.fxml"));
-
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add("/styles/Styles.css");
-        
-        stage.setTitle("Location Simulator");
-        stage.setScene(scene);
-        stage.show();
+    public String toString(Integer object) {
+        return String.valueOf(object);
     }
 
-    /**
-     * The main() method is ignored in correctly deployed JavaFX application.
-     * main() serves only as fallback in case the application can not be
-     * launched through deployment artifacts, e.g., in IDEs with limited FX
-     * support. NetBeans ignores main().
-     *
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        launch(args);
+    @Override
+    public Integer fromString(String string) {
+        try {
+            return Integer.parseInt(string);
+        } catch (NumberFormatException e) {
+            // can't parse the string because it's not a number
+            return null;
+        }
     }
-
 }

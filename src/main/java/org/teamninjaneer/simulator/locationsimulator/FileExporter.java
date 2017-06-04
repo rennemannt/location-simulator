@@ -45,7 +45,7 @@ import org.teamninjaneer.simulator.locationsimulator.model.LocationDataRow;
  * @author Travis Rennemann <rennemannt@gmail.com>
  */
 public class FileExporter {
-    
+
     private static final Logger LOGGER = Logger.getGlobal();
     private final LocationDataRow locDataRow;
     private final String exportPath;
@@ -111,7 +111,7 @@ public class FileExporter {
     public void export() throws IOException {
         final String dataRows = nextLocDataRows();
         String fileName = Instant.now().toString().replace(":", "") + fileExt;
-        Files.write(Paths.get(exportPath + "/" + fileName), dataRows.getBytes());
+        Files.write(Paths.get(exportPath + "/" + fileName), dataRows.getBytes("UTF-8"));
         statusProperty.set("Exported file at " + Instant.now().toString());
     }
 
@@ -183,21 +183,41 @@ public class FileExporter {
         }
         return newLon;
     }
-    
+
+    /**
+     * Get the observable Date Time property.
+     *
+     * @return
+     */
     public ObjectProperty<Instant> getDtProperty() {
         return dtProperty;
     }
-    
+
+    /**
+     * Get the observable Latitude property.
+     *
+     * @return
+     */
     public SimpleDoubleProperty getLatProperty() {
         return latProperty;
     }
-    
+
+    /**
+     * Get the observable Longitude property.
+     *
+     * @return
+     */
     public SimpleDoubleProperty getLonProperty() {
         return lonProperty;
     }
-    
+
+    /**
+     * Get the observable Status property.
+     *
+     * @return
+     */
     public SimpleStringProperty getStatusProperty() {
         return statusProperty;
     }
-    
+
 }

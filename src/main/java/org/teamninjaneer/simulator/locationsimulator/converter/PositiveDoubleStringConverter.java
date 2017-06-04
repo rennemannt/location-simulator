@@ -21,44 +21,53 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.teamninjaneer.simulator.locationsimulator;
+package org.teamninjaneer.simulator.locationsimulator.converter;
 
-import javafx.application.Application;
-import static javafx.application.Application.launch;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 /**
- * Main for the Location Simulator.
+ * Handle the conversion of string to double values.
  *
- * @author Travis Rennemann
+ * @author Travis.Rennemann
  */
-public final class MainApp extends Application {
+public class PositiveDoubleStringConverter extends StringConverter<Number> {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/views/MainView.fxml"));
+    public Double fromString(String value) {
 
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add("/styles/Styles.css");
-        
-        stage.setTitle("Location Simulator");
-        stage.setScene(scene);
-        stage.show();
+        // If the specified value is null or zero-length, return null
+        if (value == null) {
+            return null;
+        }
+
+        value = value.trim();
+
+        if (value.length() < 1) {
+            return null;
+        }
+
+        double doubleVal;
+        try {
+            doubleVal = Double.parseDouble(value);
+        } catch (NumberFormatException e) {
+            // can't parse the string because it's not a number
+            return null;
+        }
+        return doubleVal;
     }
 
     /**
-     * The main() method is ignored in correctly deployed JavaFX application.
-     * main() serves only as fallback in case the application can not be
-     * launched through deployment artifacts, e.g., in IDEs with limited FX
-     * support. NetBeans ignores main().
-     *
-     * @param args the command line arguments
+     * {@inheritDoc}
      */
-    public static void main(String[] args) {
-        launch(args);
+    @Override
+    public String toString(Number value) {
+        // If the specified value is null, return a zero-length String
+        if (value == null) {
+            return "";
+        }
+        return String.valueOf(value);
     }
-
 }
