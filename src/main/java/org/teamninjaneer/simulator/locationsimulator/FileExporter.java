@@ -32,6 +32,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -45,7 +46,7 @@ import org.teamninjaneer.simulator.locationsimulator.model.LocationDataRow;
  * @author Travis Rennemann <rennemannt@gmail.com>
  */
 public class FileExporter {
-
+    
     private static final Logger LOGGER = Logger.getGlobal();
     private final LocationDataRow locDataRow;
     private final String exportPath;
@@ -83,24 +84,30 @@ public class FileExporter {
      * Start the timer process.
      */
     public void start() {
-        timer.scheduleAtFixedRate(new TimerTask() {
+        Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                try {
-                    export();
-                } catch (IOException e) {
-                    statusProperty.set("Failed to export file!");
-                    LOGGER.log(Level.SEVERE, "Failed to export file!", e);
-                }
+                timer.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        try {
+                            export();
+                        } catch (IOException e) {
+                            statusProperty.set("Failed to export file!");
+                            LOGGER.log(Level.SEVERE, "Failed to export file!", e);
+                        }
+                    }
+                }, 0, newFileRate.toMillis());
             }
-        }, 0, newFileRate.toMillis());
+        });
+        
     }
 
     /**
      * Stop the timer process.
      */
     public void stop() {
-        timer.cancel();
+        Platform.runLater(timer::cancel);
     }
 
     /**
@@ -219,5 +226,5 @@ public class FileExporter {
     public SimpleStringProperty getStatusProperty() {
         return statusProperty;
     }
-
+    
 }

@@ -38,6 +38,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -216,6 +217,7 @@ public class MainViewController implements Initializable {
             public void handle(ActionEvent event) {
                 updateLocDataRow();
                 initExporter();
+
                 if ("run".equals(runButton.getText().toLowerCase(Locale.US))) {
                     exporter.start();
                     runButton.setText("stop");
@@ -249,26 +251,26 @@ public class MainViewController implements Initializable {
         exporter.getStatusProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                status.setValue(newValue);
+                Platform.runLater(() -> status.setValue(newValue));
             }
 
         });
         exporter.getLatProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                latProperty.set(newValue.doubleValue());
+                Platform.runLater(() -> latProperty.set(newValue.doubleValue()));
             }
         });
         exporter.getLonProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                lonProperty.set(newValue.doubleValue());
+                Platform.runLater(() -> lonProperty.set(newValue.doubleValue()));
             }
         });
         exporter.getDtProperty().addListener(new ChangeListener<Instant>() {
             @Override
             public void changed(ObservableValue<? extends Instant> observable, Instant oldValue, Instant newValue) {
-                dtProperty.set(newValue);
+                Platform.runLater(() -> dtProperty.set(newValue));
             }
         });
     }
