@@ -35,7 +35,9 @@ import org.teamninjaneer.simulator.locationsimulator.model.LocationDataRow;
  */
 public class PatternConverterTest {
 
-    private static final String PATTERN = "dt(yyyy/MM/dd,HH:mm:s.SSS), $lat, $lon, rand(5,40), rand(4,16)\n";
+    private static final String PATTERN_RAND_2PARAM = "dt(yyyy/MM/dd,HH:mm:s.SSS), $lat, $lon, rand(5,40), rand(4,16)\n";
+    private static final String PATTERN_RAND_1PARAM = "dt(yyyy/MM/dd,HH:mm:s.SSS), $lat, $lon, rand(50), rand(100)\n";
+    private static final String PATTERN_RAND_0PARAM = "dt(yyyy/MM/dd,HH:mm:s.SSS), $lat, $lon, rand(), rand()\n";
 
     public PatternConverterTest() {
     }
@@ -45,7 +47,7 @@ public class PatternConverterTest {
      */
     @Test
     public void testConvert() {
-        LocationDataRow dataRow = new LocationDataRow(Instant.now(), 28.5, 81.25, 1.0, 1.0, PATTERN);
+        LocationDataRow dataRow = new LocationDataRow(Instant.now(), 28.5, 81.25, 1.0, 1.0, PATTERN_RAND_2PARAM);
 
         String result = PatternConverter.convert(dataRow);
 
@@ -53,4 +55,29 @@ public class PatternConverterTest {
         assertNotNull(result);
     }
 
+    /**
+     * Test of convert method, of class PatternConverter.
+     */
+    //@Test
+    public void testConvertRand1Param() {
+        LocationDataRow dataRow = new LocationDataRow(Instant.now(), 28.5, 81.25, 1.0, 1.0, PATTERN_RAND_1PARAM);
+
+        String result = PatternConverter.convert(dataRow);
+
+        System.out.println(result);
+        assertNotNull(result);
+    }
+    
+    /**
+     * Test of convert method, of class PatternConverter.
+     */
+    @Test
+    public void testConvertRand0Param() {
+        LocationDataRow dataRow = new LocationDataRow(Instant.now(), 28.5, 81.25, 1.0, 1.0, PATTERN_RAND_0PARAM);
+
+        String result = PatternConverter.convert(dataRow);
+
+        System.out.println(result);
+        assertNotNull(result);
+    }
 }

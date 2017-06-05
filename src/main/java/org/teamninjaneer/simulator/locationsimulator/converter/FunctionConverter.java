@@ -80,7 +80,7 @@ public class FunctionConverter {
             intVal = rand.nextInt();
         }
 
-        return String.valueOf(intVal);
+        return String.valueOf(Math.abs(intVal));
     }
 
     /**

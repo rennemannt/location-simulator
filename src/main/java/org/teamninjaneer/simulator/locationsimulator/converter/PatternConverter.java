@@ -43,7 +43,7 @@ public class PatternConverter {
     private static final String INSUFFICIENT_PARAMS = "LocationDataRow and its pattern property cannot be null!";
     private static final Pattern FUNC_NAME_PATTERN = Pattern.compile("(\\w+)");
     // random function regex pattern
-    private static final Pattern RAND_PATTERN = Pattern.compile("(\\brand\\(\\b[^)]+\\))");
+    private static final Pattern RAND_PATTERN = Pattern.compile("(\\brand\\(\\)|\\brand\\(\\b[^)]+\\))");
     private static final Pattern RAND_PARAM_PATTERN = Pattern.compile("\\brand\\(\\b([^)]+)\\)");
     // date time function regex pattern
     private static final Pattern DT_PATTERN = Pattern.compile("(\\bdt\\(\\b[^)]+\\))");
