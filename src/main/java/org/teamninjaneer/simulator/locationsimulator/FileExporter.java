@@ -53,6 +53,7 @@ public class FileExporter {
     private final String fileExt;
     private final Duration newLocRate;
     private final Duration newFileRate;
+    private final int maxRowCount;
     private final Timer timer = new Timer();
     private final ObjectProperty<Instant> dtProperty = new SimpleObjectProperty<>();
     private final SimpleDoubleProperty latProperty = new SimpleDoubleProperty(0.0);
@@ -67,17 +68,20 @@ public class FileExporter {
      * @param fileExt The file extension for new exported files
      * @param newLocRate The time between consecutive location data rows
      * @param newFileRate The time between new file exports
+     * @param maxRowCount The maximum number of data rows to create at a time
      */
     public FileExporter(LocationDataRow locDataRow,
             String fileExt,
             String exportPath,
             Duration newLocRate,
-            Duration newFileRate) {
+            Duration newFileRate,
+            int maxRowCount) {
         this.locDataRow = locDataRow;
         this.exportPath = exportPath;
         this.fileExt = fileExt;
         this.newLocRate = newLocRate;
         this.newFileRate = newFileRate;
+        this.maxRowCount = maxRowCount;
     }
 
     /**
@@ -130,6 +134,10 @@ public class FileExporter {
     private String nextLocDataRows() {
         StringBuilder dataRows = new StringBuilder();
         long rowCount = Math.floorDiv(newFileRate.toMillis(), newLocRate.toMillis());
+        // limit the rowCount if it exceeds the maxRowCount
+        if(rowCount > maxRowCount) {
+            rowCount = maxRowCount;
+        }
         for (int i = 0; i < rowCount; i++) {
             // increment values
             latProperty.set(nextLat(locDataRow.getLat(), locDataRow.getLatDelta()));

@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
@@ -14,7 +18,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="450.0" prefWidth="800.0" styleClass="scene-bg" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.teamninjaneer.simulator.locationsimulator.views.MainViewController">
+<BorderPane prefHeight="450.0" prefWidth="800.0" styleClass="scene-bg" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.teamninjaneer.simulator.locationsimulator.views.MainViewController">
     <top>
         <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="10.0" styleClass="menu-bg" BorderPane.alignment="CENTER_LEFT">
             <children>
@@ -83,6 +87,12 @@
                         </VBox>
                     </children>
                 </HBox>
+            <Label text="New Row Limit" />
+            <ComboBox fx:id="newRowLimitComboBox" editable="true" prefWidth="90.0">
+               <tooltip>
+                  <Tooltip text="maximum number of new records to create" />
+               </tooltip>
+            </ComboBox>
                 <Label text="New Location Rate" />
                 <HBox alignment="BASELINE_LEFT" spacing="5.0">
                     <children>
@@ -118,12 +128,14 @@
             </BorderPane.margin>
             <children>
             <StackPane fx:id="earthStackPane" prefHeight="200.0" prefWidth="400.0" styleClass="earth-2d" />
+            <Separator orientation="VERTICAL" visible="false" VBox.vgrow="ALWAYS" />
                 <Label text="Data Row Format" />
-                <TextField fx:id="dataRowFormatTextField" text="dt(yyyy/MM/dd,HH:mm:s.SSS), $lat, $lon, rand(5,40), rand(4,16)\n">
+                <TextField fx:id="dataRowFormatTextField" layoutY="25.0" text="dt(yyyy/MM/dd,HH:mm:s.SSS), $lat, $lon, rand(5,40), rand(4,16)\n">
                <tooltip>
                   <Tooltip text="string representing the format of each data row in the output text file" />
-               </tooltip></TextField>
-            <HBox spacing="8.0">
+               </tooltip>
+            </TextField>
+            <HBox layoutY="60.0" spacing="8.0">
                <children>
                   <VBox>
                      <children>

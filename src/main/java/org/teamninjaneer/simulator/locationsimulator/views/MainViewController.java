@@ -59,7 +59,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
-import javafx.util.StringConverter;
 import org.controlsfx.validation.Severity;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
@@ -114,6 +113,9 @@ public class MainViewController implements Initializable {
 
     @FXML
     private ComboBox<Double> lonDeltaComboBox;
+    
+    @FXML
+    private ComboBox<Integer> newRowLimitComboBox;
 
     @FXML
     private TextField dataRowFormatTextField;
@@ -177,12 +179,16 @@ public class MainViewController implements Initializable {
         lonProperty.addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> earth.movePlacemark(latProperty.get(), newValue.doubleValue()));
 
         latDeltaComboBox.setItems(FXCollections.<Double>observableArrayList(0.001, 0.01, 0.1, 1.0, 5.0, 10.0, 20.0, 30.0, 40.0, 60.0));
-        latDeltaComboBox.getSelectionModel().select(1.0);
+        latDeltaComboBox.getSelectionModel().select(3);
         latDeltaComboBox.setConverter(doubleStrConv);
 
         lonDeltaComboBox.setItems(FXCollections.<Double>observableArrayList(0.001, 0.01, 0.1, 1.0, 5.0, 10.0, 20.0, 30.0, 40.0, 60.0));
-        lonDeltaComboBox.getSelectionModel().select(1.0);
+        lonDeltaComboBox.getSelectionModel().select(3);
         lonDeltaComboBox.setConverter(doubleStrConv);
+        
+        newRowLimitComboBox.setItems(FXCollections.<Integer>observableArrayList(1, 5, 10, 20, 50, 100, 250, 500, 1000, 5000, 10000));
+        newRowLimitComboBox.getSelectionModel().select(5);
+        newRowLimitComboBox.setConverter(intStrConv);
 
         browseButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -223,6 +229,7 @@ public class MainViewController implements Initializable {
                     runButton.setText("stop");
                 } else {
                     exporter.stop();
+                    exporter = null;
                     runButton.setText("run");
                 }
             }
@@ -247,7 +254,8 @@ public class MainViewController implements Initializable {
                 fileExtensionTextField.getText(),
                 exportDirectoryTextField.getText(),
                 newLocRate,
-                newFileRate);
+                newFileRate,
+                newRowLimitComboBox.getValue());
         exporter.getStatusProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -357,6 +365,7 @@ public class MainViewController implements Initializable {
                 "longitude must be given in decimal degrees format between 180 and -180",
                 "^(\\+|-)?(?:180(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\\.[0-9]{1,6})?))$",
                 Severity.ERROR));
+        validationSupport.registerValidator(newRowLimitComboBox, true, intValidator);
         validationSupport.registerValidator(dataRowFormatTextField, true, Validator.createEmptyValidator("data row format must be provided"));
         validationSupport.registerValidator(exportDirectoryTextField, true, Validator.createEmptyValidator("an export directory must be given"));
 
