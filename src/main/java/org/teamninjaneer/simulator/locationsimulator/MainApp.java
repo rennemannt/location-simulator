@@ -54,6 +54,7 @@ public final class MainApp extends Application {
     public void stop() throws Exception {
         super.stop();
         Platform.exit();
+        System.exit(0);
     }
     
     
