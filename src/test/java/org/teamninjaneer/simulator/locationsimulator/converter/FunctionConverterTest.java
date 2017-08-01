@@ -61,8 +61,9 @@ public class FunctionConverterTest {
 
         String result = FunctionConverter.convertRand();
         assertNotNull(result);
-        
-        Integer intResult = Integer.valueOf(result);        
+        System.out.println(result);
+
+        Integer intResult = Integer.valueOf(result);
         assertTrue(intResult > 0);
     }
 
@@ -72,13 +73,28 @@ public class FunctionConverterTest {
     @Test
     public void testConvertRand_seedAndUpperBound() {
 
-        String result = FunctionConverter.convertRand(10, 800);
+        String result = FunctionConverter.convertRand(10, 100);
         assertNotNull(result);
-        
-        Integer intResult = Integer.valueOf(result);        
-        assertTrue(intResult > 0 && intResult < 800);
+        System.out.println(result);
+
+        Integer intResult = Integer.valueOf(result);
+        assertTrue(intResult > 0 && intResult < 100);
     }
     
+    /**
+     * Test of convertRand method, of class FunctionConverter.
+     */
+    @Test
+    public void testConvertRand_upperBound() {
+
+        String result = FunctionConverter.convertRand(null, 100);
+        assertNotNull(result);
+        System.out.println(result);
+
+        Integer intResult = Integer.valueOf(result);
+        assertTrue(intResult > 0 && intResult < 100);
+    }
+
     /**
      * Test of convertRand method, of class FunctionConverter.
      */
@@ -87,9 +103,10 @@ public class FunctionConverterTest {
 
         String result = FunctionConverter.convertRand("10, 15");
         assertNotNull(result);
-        
-        Integer intResult = Integer.valueOf(result);        
+        System.out.println(result);
+
+        Integer intResult = Integer.valueOf(result);
         assertTrue(intResult > 0 && intResult < 15);
     }
-    
+
 }

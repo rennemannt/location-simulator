@@ -65,15 +65,18 @@ public class FunctionConverter {
     /**
      * Generate a random positive integer based on the parameters.
      *
-     * @param seed The random generator seed (initial) value
-     * @param upperBound The random generator's upper limit value
+     * @param lowerBound The lower limit (exclusive) value for the random number
+     * @param upperBound The upper limit (exclusive) value for the random number
      * @return
      */
-    public static String convertRand(Integer seed, Integer upperBound) {
+    public static String convertRand(Integer lowerBound, Integer upperBound) {
         int intVal;
         Random rand;
-        if (seed != null && upperBound != null) {
-            rand = new Random(seed);
+        if (lowerBound != null && upperBound != null) {
+            rand = new Random();
+            intVal = rand.nextInt(upperBound - lowerBound) + lowerBound;
+        } else if (upperBound != null) {
+            rand = new Random();
             intVal = rand.nextInt(upperBound);
         } else {
             rand = new Random();
@@ -100,14 +103,20 @@ public class FunctionConverter {
      */
     public static String convertRand(String param) {
         if (param.trim().isEmpty()) {
+            // get a random number because there are not params
             return convertRand();
-        } else {
+        } else if (param.contains(",")) {
+            // get a random number between a lower and upper bound
             String[] paramParts = param.split(",");
             if (paramParts.length == 2) {
                 Integer seed = Integer.valueOf(paramParts[0].trim());
                 Integer upperBound = Integer.valueOf(paramParts[1].trim());
                 return convertRand(seed, upperBound);
             }
+        } else {
+            // get a random number less than the upper bound
+            Integer upperBound = Integer.valueOf(param.trim());
+            return convertRand(null, upperBound);
         }
         return null;
     }
