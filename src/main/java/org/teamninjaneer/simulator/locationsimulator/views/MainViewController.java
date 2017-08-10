@@ -243,9 +243,6 @@ public class MainViewController implements Initializable {
      * Initialize File Exporter.
      */
     private void initExporter() {
-        if (exporter != null) {
-            return;
-        }
         Duration newLocRate = Duration.of(locRateValueComboBox.getValue(),
                 TemporalUnitConverter.convert(locRateUomChoiceBox.getValue()));
         Duration newFileRate = Duration.of(newFileRateValueComboBox.getValue(),

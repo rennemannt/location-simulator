@@ -26,6 +26,7 @@ package org.teamninjaneer.simulator.locationsimulator.converter;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -65,7 +66,10 @@ public class PatternConverter {
      * @return
      */
     public static String convert(LocationDataRow dataRow) {
-        if (dataRow == null || dataRow.getPattern().isEmpty()) {
+        if (dataRow == null
+                || dataRow.getPattern() == null
+                || dataRow.getPattern().isEmpty()) {
+            LOGGER.log(Level.WARNING, INSUFFICIENT_PARAMS);
             throw new UnsupportedOperationException(INSUFFICIENT_PARAMS);
         }
         String converted = dataRow.getPattern();
