@@ -32,7 +32,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
@@ -40,6 +39,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -81,6 +81,7 @@ public class MainViewController implements Initializable {
     private final SimpleDoubleProperty lonProperty = new SimpleDoubleProperty(0.0);
     private final IntegerStringConverter intStrConv = new IntegerStringConverter();
     private final DoubleStringConverter doubleStrConv = new DoubleStringConverter();
+    private final SimpleBooleanProperty isTimerRunning = new SimpleBooleanProperty(false);
     private FileExporter exporter = null;
     private EarthViewController earth;
 
@@ -113,7 +114,7 @@ public class MainViewController implements Initializable {
 
     @FXML
     private ComboBox<Double> lonDeltaComboBox;
-    
+
     @FXML
     private ComboBox<Integer> newRowLimitComboBox;
 
@@ -185,7 +186,7 @@ public class MainViewController implements Initializable {
         lonDeltaComboBox.setItems(FXCollections.<Double>observableArrayList(0.001, 0.01, 0.1, 1.0, 5.0, 10.0, 20.0, 30.0, 40.0, 60.0));
         lonDeltaComboBox.getSelectionModel().select(3);
         lonDeltaComboBox.setConverter(doubleStrConv);
-        
+
         newRowLimitComboBox.setItems(FXCollections.<Integer>observableArrayList(1, 5, 10, 20, 50, 100, 250, 500, 1000, 5000, 10000));
         newRowLimitComboBox.getSelectionModel().select(5);
         newRowLimitComboBox.setConverter(intStrConv);
@@ -224,12 +225,23 @@ public class MainViewController implements Initializable {
                 updateLocDataRow();
                 initExporter();
 
-                if ("run".equals(runButton.getText().toLowerCase(Locale.US))) {
+                if (!exporter.getRunTimerTask().get()) {
                     exporter.start();
-                    runButton.setText("stop");
                 } else {
                     exporter.stop();
                     exporter = null;
+                }
+            }
+        });
+
+        isTimerRunning.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable,
+                    Boolean oldValue,
+                    Boolean timerIsOn) {
+                if (timerIsOn) {
+                    runButton.setText("stop");
+                } else {
                     runButton.setText("run");
                 }
             }
@@ -247,12 +259,14 @@ public class MainViewController implements Initializable {
                 TemporalUnitConverter.convert(locRateUomChoiceBox.getValue()));
         Duration newFileRate = Duration.of(newFileRateValueComboBox.getValue(),
                 TemporalUnitConverter.convert(newFileRateUomChoiceBox.getValue()));
-        exporter = new FileExporter(locDataRow,
-                fileExtensionTextField.getText(),
-                exportDirectoryTextField.getText(),
-                newLocRate,
-                newFileRate,
-                newRowLimitComboBox.getValue());
+        if (exporter == null) {
+            exporter = new FileExporter(locDataRow,
+                    fileExtensionTextField.getText(),
+                    exportDirectoryTextField.getText(),
+                    newLocRate,
+                    newFileRate,
+                    newRowLimitComboBox.getValue());
+        }
         exporter.getStatusProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -278,6 +292,7 @@ public class MainViewController implements Initializable {
                 Platform.runLater(() -> dtProperty.set(newValue));
             }
         });
+        isTimerRunning.bind(exporter.getRunTimerTask());
     }
 
     /**

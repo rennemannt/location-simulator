@@ -32,11 +32,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import org.teamninjaneer.simulator.locationsimulator.converter.PatternConverter;
 import org.teamninjaneer.simulator.locationsimulator.model.LocationDataRow;
 
@@ -46,7 +47,7 @@ import org.teamninjaneer.simulator.locationsimulator.model.LocationDataRow;
  * @author Travis Rennemann <rennemannt@gmail.com>
  */
 public class FileExporter {
-    
+
     private static final Logger LOGGER = Logger.getGlobal();
     private final LocationDataRow locDataRow;
     private final String exportPath;
@@ -59,6 +60,18 @@ public class FileExporter {
     private final SimpleDoubleProperty latProperty = new SimpleDoubleProperty(0.0);
     private final SimpleDoubleProperty lonProperty = new SimpleDoubleProperty(0.0);
     private final SimpleStringProperty statusProperty = new SimpleStringProperty("Ready");
+    private final SimpleBooleanProperty runTimerTask = new SimpleBooleanProperty(false);
+    private final TimerTask timerTask = new TimerTask() {
+        @Override
+        public void run() {
+            try {
+                export();
+            } catch (IOException e) {
+                statusProperty.set("Failed to export file!");
+                LOGGER.log(Level.SEVERE, "Failed to export file!", e);
+            }
+        }
+    };
 
     /**
      * Construct file exporter.
@@ -82,36 +95,29 @@ public class FileExporter {
         this.newLocRate = newLocRate;
         this.newFileRate = newFileRate;
         this.maxRowCount = maxRowCount;
+        this.runTimerTask.addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean runTask) -> {
+            if (runTask) {
+                timer.scheduleAtFixedRate(timerTask, 0, newFileRate.toMillis());
+            } else {
+                timerTask.cancel();
+                timer.cancel();
+                timer.purge();
+            }
+        });
     }
 
     /**
      * Start the timer process.
      */
     public void start() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                timer.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
-                        try {
-                            export();
-                        } catch (IOException e) {
-                            statusProperty.set("Failed to export file!");
-                            LOGGER.log(Level.SEVERE, "Failed to export file!", e);
-                        }
-                    }
-                }, 0, newFileRate.toMillis());
-            }
-        });
-        
+        runTimerTask.set(true);
     }
 
     /**
      * Stop the timer process.
      */
     public void stop() {
-        Platform.runLater(timer::cancel);
+        runTimerTask.set(false);
     }
 
     /**
@@ -135,7 +141,7 @@ public class FileExporter {
         StringBuilder dataRows = new StringBuilder();
         long rowCount = Math.floorDiv(newFileRate.toMillis(), newLocRate.toMillis());
         // limit the rowCount if it exceeds the maxRowCount
-        if(rowCount > maxRowCount) {
+        if (rowCount > maxRowCount) {
             rowCount = maxRowCount;
         }
         for (int i = 0; i < rowCount; i++) {
@@ -234,5 +240,14 @@ public class FileExporter {
     public SimpleStringProperty getStatusProperty() {
         return statusProperty;
     }
-    
+
+    /**
+     * Get the timer task observable; tells you if the timer is on (true) or off
+     * (false).
+     *
+     * @return
+     */
+    public SimpleBooleanProperty getRunTimerTask() {
+        return runTimerTask;
+    }
 }
